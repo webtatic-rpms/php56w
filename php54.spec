@@ -6,7 +6,7 @@
 # Extension version
 %global fileinfover 1.0.5
 %global pharver     2.0.1
-%global zipver      1.9.1
+%global zipver      1.11.0
 %global jsonver     1.2.1
 
 %define httpd_mmn %(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)
@@ -23,7 +23,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
-Version: 5.4.4
+Version: 5.4.5
 Release: 1%{?dist}
 License: PHP
 Group: Development/Languages
@@ -883,7 +883,10 @@ fi
 %files enchant -f files.enchant
 
 %changelog
-* Thu May 14 2012 Andy Thompson <andy@webtatic.com> - 5.4.4-1
+* Sat Jul 21 2012 Andy Thompson <andy@webtatic.com> - 5.4.5-1
+- update to php-5.4.5
+
+* Thu Jun 14 2012 Andy Thompson <andy@webtatic.com> - 5.4.4-1
 - update to php-5.4.4
 
 * Tue May 08 2012 Andy Thompson <andy@webtatic.com> - 5.4.3-1
