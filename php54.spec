@@ -23,7 +23,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
-Version: 5.4.6
+Version: 5.4.7
 Release: 1%{?dist}
 License: PHP
 Group: Development/Languages
@@ -883,6 +883,9 @@ fi
 %files enchant -f files.enchant
 
 %changelog
+* Mon Sep 17 2012 Andy Thompson <andy@webtatic.com> - 5.4.7-1
+- update to php-5.4.7
+
 * Sat Aug 18 2012 Andy Thompson <andy@webtatic.com> - 5.4.6-1
 - update to php-5.4.6
 
