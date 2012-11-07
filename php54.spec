@@ -24,7 +24,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
 Version: 5.4.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -883,6 +883,9 @@ fi
 %files enchant -f files.enchant
 
 %changelog
+* Wed Nov 07 2012 Andy Thompson <andy@webtatic.com> - 5.4.8-2
+- switch php-fpm default user/group to nobody
+
 * Thu Oct 18 2012 Andy Thompson <andy@webtatic.com> - 5.4.8-1
 - update to php-5.4.8
 
