@@ -22,9 +22,9 @@
 %endif
 
 Summary: PHP scripting language for creating dynamic web sites
-Name: php54w
-Version: 5.4.16
-Release: 1%{?dist}
+Name: php55w
+Version: 5.5.0alpha1
+Release: 0.1%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -137,7 +137,7 @@ Summary: Common files for PHP
 Provides: php-api = %{apiver}, php-zend-abi = %{zendver}
 Provides: php(api) = %{apiver}, php(zend-abi) = %{zendver}
 Provides: php-common = %{version}-%{release}
-Conflicts: php-common < 5.4.0
+Conflicts: php-common < 5.5.0
 # Provides for all builtin modules:
 Provides: php-bz2, php-calendar, php-ctype, php-curl, php-date, php-exif
 Provides: php-ftp, php-gettext, php-gmp, php-hash, php-iconv, php-libxml
@@ -935,65 +935,6 @@ fi
 %files enchant -f files.enchant
 
 %changelog
-* Sun Jun 09 2013 Andy Thompson <andy@webtatic.com> - 5.4.16-1
-- update to php-5.4.16
-- Add provides hints for all packages back to php prefix
-
-* Sun May 26 2013 Andy Thompson <andy@webtatic.com> - 5.4.15-2
-- Update aclocal to use EL5 libtool files on EL5
-- Remove sqlite3 extension if RHEL < 6
-- Build with packaged pcre
-- Restrict mysql extension build requirements to 5.0 if RHEL < 6
-
-* Sat May 11 2013 Andy Thompson <andy@webtatic.com> - 5.4.15-1
-- update to php-5.4.15
-
-* Sun Apr 21 2013 Andy Thompson <andy@webtatic.com> - 5.4.14-1
-- update to php-5.4.14
-
-* Fri Mar 29 2013 Andy Thompson <andy@webtatic.com> - 5.4.13-1
-- update to php-5.4.13
-
-* Sat Feb 23 2013 Andy Thompson <andy@webtatic.com> - 5.4.12-1
-- update to php-5.4.12
-
-* Thu Dec 20 2012 Andy Thompson <andy@webtatic.com> - 5.4.10-1
-- update to php-5.4.10
-
-* Sun Nov 25 2012 Andy Thompson <andy@webtatic.com> - 5.4.9-1
-- switch php-fpm default user/group to nobody
-- update to php-5.4.9
-
-* Thu Oct 18 2012 Andy Thompson <andy@webtatic.com> - 5.4.8-1
-- update to php-5.4.8
-
-* Mon Sep 17 2012 Andy Thompson <andy@webtatic.com> - 5.4.7-1
-- update to php-5.4.7
-
-* Sat Aug 18 2012 Andy Thompson <andy@webtatic.com> - 5.4.6-1
-- update to php-5.4.6
-
-* Sat Jul 21 2012 Andy Thompson <andy@webtatic.com> - 5.4.5-1
-- update to php-5.4.5
-
-* Thu Jun 14 2012 Andy Thompson <andy@webtatic.com> - 5.4.4-1
-- update to php-5.4.4
-
-* Tue May 08 2012 Andy Thompson <andy@webtatic.com> - 5.4.3-1
-- update to php-5.4.3
-
-* Fri May 04 2012 Andy Thompson <andy@webtatic.com> - 5.4.2-1
-- update to php-5.4.2
-
-* Thu May 03 2012 Andy Thompson <andy@webtatic.com> - 5.4.1-2
-- fix php-common conflict
-
-* Thu Apr 26 2012 Andy Thompson <andy@webtatic.com> - 5.4.1-1
-- update to php-5.4.1
-- add php-common provides
-
-* Sat Mar  3 2012 Andy Thompson <andy@webtatic.com> - 5.4.0-1
-- import php-5.3.3.3-3.6 SPEC
-- update to php-5.4.0
-- update to package name php54w
-- add php54w-fpm
+* Tue Dec 18 2012 Andy Thompson <andy@webtatic.com> - 5.5.0alpha1-0.1
+- fork php54w package
+- update to php-5.5.0alpha1
