@@ -1,10 +1,10 @@
 %global contentdir  /var/www
 # API/ABI check
-%global apiver      20100412
-%global zendver     20100525
+%global apiver      20121113
+%global zendver     20121113
 %global pdover      20080721
 # Extension version
-%global fileinfover 1.0.5
+%global fileinfover 1.0.5-dev
 %global pharver     2.0.1
 %global zipver      1.11.0
 %global jsonver     1.2.1
