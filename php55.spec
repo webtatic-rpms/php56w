@@ -51,7 +51,6 @@ Patch7: php-5.3.0-recode.patch
 
 # Functional changes
 Patch40: php-5.0.4-dlopen.patch
-Patch41: php-5.3.0-easter.patch
 Patch42: php-5.3.1-systzdata-v7.patch
 
 # Fixes for tests
@@ -441,7 +440,6 @@ support for using the enchant library to PHP.
 %patch7 -p1 -b .recode
 
 %patch40 -p1 -b .dlopen
-%patch41 -p1 -b .easter
 %patch42 -p1 -b .systzdata
 
 %patch61 -p1 -b .tests-wddx
