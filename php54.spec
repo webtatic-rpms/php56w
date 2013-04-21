@@ -198,7 +198,7 @@ Summary: A module for PHP applications that use MySQL databases
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
 Provides: php_database, php-mysqli, php-pdo_mysql
-BuildRequires: mysql-devel >= 4.1.0
+BuildRequires: mysql-devel < 5.2
 
 %description mysql
 The %{name}-mysql package contains a dynamic shared object that will add
