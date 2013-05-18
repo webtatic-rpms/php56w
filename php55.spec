@@ -8,6 +8,7 @@
 %global pharver     2.0.1
 %global zipver      1.11.0
 %global jsonver     1.2.1
+%global opcachever  7.0.2-dev
 
 %define httpd_mmn %(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)
 
@@ -37,6 +38,7 @@ Source4: php-fpm.conf
 Source5: php-fpm-www.conf
 Source6: php-fpm.init
 Source7: php-fpm.logrotate
+Source8: opcache.ini
 
 # Build fixes
 Patch1: php-5.4.1-gnusrc.patch
@@ -384,6 +386,17 @@ Provides: php-embedded-devel = %{version}-%{release}
 The %{name}-embedded package contains a library which can be embedded
 into applications to provide PHP scripting language support.
 
+%package opcache
+Summary: An opcode cache Zend extension
+Group: Development/Languages
+Requires: %{name}-common = %{version}-%{release}
+# For obsoleted pecl extension
+Provides: %{name}-pecl-zendopcache = %{opcachever}, php-pecl(OPcache) = %{opcachever}
+
+%description opcache
+The %{name}-opcache package contains an opcode cache used for caching and
+optimizing intermediate code.
+
 %package pspell
 Summary: A module for PHP applications for using pspell interfaces
 Group: System Environment/Libraries
@@ -512,6 +525,12 @@ ver=$(sed -n '/#define PHP_JSON_VERSION /{s/.* "//;s/".*$//;p}' ext/json/php_jso
 if test "$ver" != "%{jsonver}"; then
    : Error: Upstream JSON version is now ${ver}, expecting %{jsonver}.
    : Update the jsonver macro and rebuild.
+   exit 1
+fi
+ver=$(sed -n '/#define ACCELERATOR_VERSION /{s/.* "//;s/".*$//;p}' ext/opcache/ZendAccelerator.h)
+if test "$ver" != "%{opcachever}"; then
+   : Error: Upstream OPcache version is now ${ver}, expecting %{opcachever}.
+   : Update the opcachever macro and rebuild.
    exit 1
 fi
 
@@ -646,7 +665,8 @@ build --enable-force-cgi-redirect \
       --enable-intl=shared \
       --with-icu-dir=%{_prefix} \
       --with-enchant=shared,%{_prefix} \
-      --with-recode=shared,%{_prefix}
+      --with-recode=shared,%{_prefix} \
+      --enable-opcache
 popd
 
 without_shared="--without-mysql --without-gd \
@@ -655,7 +675,8 @@ without_shared="--without-mysql --without-gd \
       --without-sqlite3 --disable-phar --disable-fileinfo \
       --disable-json --without-pspell --disable-wddx \
       --without-curl --disable-posix \
-      --disable-sysvmsg --disable-sysvshm --disable-sysvsem"
+      --disable-sysvmsg --disable-sysvshm --disable-sysvsem \
+      --disable-opcache"
 
 # Build Apache module, and the CLI SAPI, /usr/bin/php
 pushd build-apache
@@ -763,6 +784,9 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/php-fpm
 
 # Fix the link
 (cd $RPM_BUILD_ROOT%{_bindir}; ln -sfn phar.phar phar)
+
+# Copy stub .ini file for opcache
+install -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/php.d/opcache.ini
 
 # Generate files lists and stub .ini files for each subpackage
 for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
@@ -909,6 +933,11 @@ fi
 %{_libdir}/libphp5.so
 %{_libdir}/libphp5-%{version}.so
 
+%files opcache
+%defattr(-,root,root)
+%attr(755,root,root) %{_libdir}/php/modules/opcache.so
+%config(noreplace) %{_sysconfdir}/php.d/opcache.ini
+
 %files pgsql -f files.pgsql
 %files mysql -f files.mysql
 %files odbc -f files.odbc
@@ -936,6 +965,7 @@ fi
 * Sat May 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.0RC1-0.2
 - update to php-5.5.0RC1
 - update Zend ABI version check to match new 20121212
+- extract opcache extension into a sub-package with upstream version check
 
 * Tue Dec 18 2012 Andy Thompson <andy@webtatic.com> - 5.5.0alpha1-0.1
 - fork php54w package
