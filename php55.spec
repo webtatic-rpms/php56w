@@ -1,7 +1,7 @@
 %global contentdir  /var/www
 # API/ABI check
 %global apiver      20121113
-%global zendver     20121113
+%global zendver     20121212
 %global pdover      20080721
 # Extension version
 %global fileinfover 1.0.5-dev
@@ -935,6 +935,7 @@ fi
 %changelog
 * Sat May 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.0RC1-0.2
 - update to php-5.5.0RC1
+- update Zend ABI version check to match new 20121212
 
 * Tue Dec 18 2012 Andy Thompson <andy@webtatic.com> - 5.5.0alpha1-0.1
 - fork php54w package
