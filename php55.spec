@@ -24,8 +24,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
-Version: 5.5.0RC1
-Release: 0.2%{?dist}
+Version: 5.5.0RC2
+Release: 0.3%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -962,11 +962,8 @@ fi
 %files enchant -f files.enchant
 
 %changelog
-* Sat May 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.0RC1-0.2
-- update to php-5.5.0RC1
+* Fri May 24 2013 Andy Thompson <andy@webtatic.com> - 5.5.0RC2-0.3
+- fork php54w package
+- update to php-5.5.0RC2
 - update Zend ABI version check to match new 20121212
 - extract opcache extension into a sub-package with upstream version check
-
-* Tue Dec 18 2012 Andy Thompson <andy@webtatic.com> - 5.5.0alpha1-0.1
-- fork php54w package
-- update to php-5.5.0alpha1
