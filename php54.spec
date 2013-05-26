@@ -24,7 +24,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
 Version: 5.4.15
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -911,6 +911,12 @@ fi
 %files enchant -f files.enchant
 
 %changelog
+* Sun May 26 2013 Andy Thompson <andy@webtatic.com> - 5.4.15-2
+- Update aclocal to use EL5 libtool files on EL5
+- Remove sqlite3 extension if RHEL < 6
+- Build with packaged pcre
+- Restrict mysql extension build requirements to 5.0 if RHEL < 6
+
 * Sat May 11 2013 Andy Thompson <andy@webtatic.com> - 5.4.15-1
 - update to php-5.4.15
 
