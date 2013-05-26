@@ -75,6 +75,7 @@ BuildRequires: sqlite-devel >= 3.0.0
 BuildRequires: zlib-devel, pcre-devel >= 6.6, smtpdaemon, libedit-devel
 BuildRequires: bzip2, perl, libtool >= 1.4.3, gcc-c++
 Requires: httpd-mmn = %{httpd_mmn}
+Provides: php = %{version}-%{release}
 Provides: mod_php = %{version}-%{release}
 Requires: %{name}-common = %{version}-%{release}
 # For backwards-compatibility, require %{name}-cli for the time being:
@@ -97,6 +98,7 @@ language to Apache HTTP Server.
 Group: Development/Languages
 Summary: Command-line interface for PHP
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-cli = %{version}-%{release}
 Provides: php-cgi = %{version}-%{release}, php-cli = %{version}-%{release}
 Provides: php-pcntl, php-readline
 
@@ -110,6 +112,7 @@ Summary: Thread-safe PHP interpreter for use with the Apache HTTP Server
 Requires: %{name}-common = %{version}-%{release}
 Requires: httpd-mmn = %{httpd_mmn}
 BuildRequires: libtool-ltdl-devel
+Provides: php-zts = %{version}-%{release}
 
 %description zts
 The %{name}-zts package contains a module for use with the Apache HTTP
@@ -167,6 +170,7 @@ Summary: A module for PHP applications that use IMAP
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: krb5-devel, openssl-devel, libc-client-devel
+Provides: php-imap = %{version}-%{release}
 
 %description imap
 The %{name}-imap package contains a dynamic shared object that will
@@ -177,6 +181,7 @@ Summary: A module for PHP applications that use LDAP
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: cyrus-sasl-devel, openldap-devel, openssl-devel
+Provides: php-ldap = %{version}-%{release}
 
 %description ldap
 The %{name}-ldap package is a dynamic shared object (DSO) for the Apache
@@ -190,6 +195,7 @@ need to install this package in addition to the %{name} package.
 Summary: A database access abstraction module for PHP applications
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-pdo = %{version}-%{release}
 Provides: php-pdo-abi = %{pdover}
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 Provides: php-sqlite3
@@ -206,6 +212,7 @@ databases.
 Summary: A module for PHP applications that use MySQL databases
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
+Provides: php-mysql = %{version}-%{release}
 Provides: php_database, php-mysqli, php-pdo_mysql
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 BuildRequires: mysql-devel < 5.2
@@ -224,6 +231,7 @@ this package and the %{name} package.
 Summary: A PostgreSQL database module for PHP
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
+Provides: php-pgsql = %{version}-%{release}
 Provides: php_database, php-pdo_pgsql
 BuildRequires: krb5-devel, openssl-devel, postgresql-devel
 
@@ -240,6 +248,7 @@ PostgreSQL, you should install this package in addition to the main
 Summary: Modules for PHP script using system process interfaces
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-process = %{version}-%{release}
 Provides: php-posix, php-sysvsem, php-sysvshm, php-sysvmsg
 
 %description process
@@ -251,6 +260,7 @@ communication.
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
 Summary: A module for PHP applications that use ODBC databases
+Provides: php-odbc = %{version}-%{release}
 Provides: php_database, php-pdo_odbc
 BuildRequires: unixODBC-devel
 
@@ -268,6 +278,7 @@ Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 Summary: A module for PHP applications that use the SOAP protocol
 BuildRequires: libxml2-devel
+Provides: php-soap = %{version}-%{release}
 
 %description soap
 The %{name}-soap package contains a dynamic shared object that will add
@@ -278,6 +289,7 @@ Summary: A module for PHP applications that query SNMP-managed devices
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, net-snmp
 BuildRequires: net-snmp-devel
+Provides: php-snmp = %{version}-%{release}
 
 %description snmp
 The %{name}-snmp package contains a dynamic shared object that will add
@@ -289,6 +301,7 @@ will need to install this package and the %{name} package.
 Summary: A module for PHP applications which use XML
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-xml = %{version}-%{release}
 Provides: php-dom, php-xsl, php-domxml, php-wddx
 BuildRequires: libxslt-devel >= 1.0.18-1, libxml2-devel >= 2.4.14-1
 
@@ -301,6 +314,7 @@ and performing XSL transformations on XML documents.
 Summary: A module for PHP applications which use the XML-RPC protocol
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-xmlrpc = %{version}-%{release}
 
 %description xmlrpc
 The %{name}-xmlrpc package contains a dynamic shared object that will add
@@ -310,6 +324,7 @@ support for the XML-RPC protocol to PHP.
 Summary: A module for PHP applications which need multi-byte string handling
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-mbstring = %{version}-%{release}
 
 %description mbstring
 The %{name}-mbstring package contains a dynamic shared object that will add
@@ -321,6 +336,7 @@ Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 # Required to build the bundled GD library
 BuildRequires: libXpm-devel, libjpeg-devel, libpng-devel, freetype-devel
+Provides: php-gd = %{version}-%{release}
 
 %description gd
 The %{name}-gd package contains a dynamic shared object that will add
@@ -330,6 +346,7 @@ support for using the gd graphics library to PHP.
 Summary: A module for PHP applications for using the bcmath library
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-bcmath = %{version}-%{release}
 
 %description bcmath
 The %{name}-bcmath package contains a dynamic shared object that will add
@@ -339,6 +356,7 @@ support for using the bcmath library to PHP.
 Summary: A database abstraction layer module for PHP applications
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-dba = %{version}-%{release}
 
 %description dba
 The %{name}-dba package contains a dynamic shared object that will add
@@ -349,6 +367,7 @@ Summary: Standard PHP module provides tidy library support
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: libtidy-devel
+Provides: php-tidy = %{version}-%{release}
 
 %description tidy
 The %{name}-tidy package contains a dynamic shared object that will add
@@ -358,6 +377,7 @@ support for using the tidy library to PHP.
 Summary: PHP library for embedding in applications
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
+Provides: php-embedded = %{version}-%{release}
 # doing a real -devel package for just the .so symlink is a bit overkill
 Provides: php-embedded-devel = %{version}-%{release}
 
@@ -370,6 +390,7 @@ Summary: A module for PHP applications for using pspell interfaces
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: aspell-devel >= 0.50.0
+Provides: php-pspell = %{version}-%{release}
 
 %description pspell
 The %{name}-pspell package contains a dynamic shared object that will add
@@ -380,6 +401,7 @@ Summary: A module for PHP applications for using the recode library
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: recode-devel
+Provides: php-recode = %{version}-%{release}
 
 %description recode
 The %{name}-recode package contains a dynamic shared object that will add
@@ -390,6 +412,7 @@ Summary: Internationalization extension for PHP applications
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: libicu-devel >= 3.6
+Provides: php-intl = %{version}-%{release}
 
 %description intl
 The %{name}-intl package contains a dynamic shared object that will add
@@ -400,6 +423,7 @@ Summary: Human Language and Character Encoding Support
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
 BuildRequires: enchant-devel >= 1.2.4
+Provides: php-enchant = %{version}-%{release}
 
 %description enchant
 The %{name}-intl package contains a dynamic shared object that will add
