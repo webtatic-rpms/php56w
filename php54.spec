@@ -550,7 +550,7 @@ ln -sf ../configure
 	--with-iconv \
 	--with-jpeg-dir=%{_prefix} \
 	--with-openssl \
-        --with-pcre-regex=%{_prefix} \
+        --with-pcre-regex \
 	--with-zlib \
 	--with-layout=GNU \
 	--enable-exif \
