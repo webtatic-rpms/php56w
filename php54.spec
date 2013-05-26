@@ -488,12 +488,18 @@ chmod 644 README.*
 echo "d %{_localstatedir}/run/php-fpm 755 root root" >php-fpm.tmpfiles
 
 %build
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 # aclocal workaround - to be improved
 cat `aclocal --print-ac-dir`/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4 >>aclocal.m4
+%endif
 
 # Force use of system libtool:
 libtoolize --force --copy
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 cat `aclocal --print-ac-dir`/{libtool,ltoptions,ltsugar,ltversion,lt~obsolete}.m4 >build/libtool.m4
+%else
+cat `aclocal --print-ac-dir`/libtool.m4 > build/libtool.m4
+%endif
 
 # Regenerate configure scripts (patches change config.m4's)
 touch configure.in
