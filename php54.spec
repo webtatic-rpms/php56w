@@ -65,7 +65,13 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires: bzip2-devel, curl-devel >= 7.9, db4-devel, gmp-devel
 BuildRequires: httpd-devel >= 2.0.46-1, pam-devel
-BuildRequires: libstdc++-devel, openssl-devel, sqlite-devel >= 3.6.0
+BuildRequires: libstdc++-devel, openssl-devel
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
+# For Sqlite3 extension
+BuildRequires: sqlite-devel >= 3.6.0
+%else
+BuildRequires: sqlite-devel >= 3.0.0
+%endif
 BuildRequires: zlib-devel, pcre-devel >= 6.6, smtpdaemon, libedit-devel
 BuildRequires: bzip2, perl, libtool >= 1.4.3, gcc-c++
 Requires: httpd-mmn = %{httpd_mmn}
@@ -185,7 +191,10 @@ Summary: A database access abstraction module for PHP applications
 Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 Provides: php-pdo-abi = %{pdover}
-Provides: php-sqlite3, php-pdo_sqlite
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
+Provides: php-sqlite3
+%endif
+Provides: php-pdo_sqlite
 
 %description pdo
 The %{name}-pdo package contains a dynamic shared object that will add
@@ -592,7 +601,11 @@ build --enable-force-cgi-redirect \
       --with-pdo-mysql=shared,%{mysql_config} \
       --with-pdo-pgsql=shared,%{_prefix} \
       --with-pdo-sqlite=shared,%{_prefix} \
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
       --with-sqlite3=shared,%{_prefix} \
+%else
+      --without-sqlite3 \
+%endif
       --enable-json=shared \
       --enable-zip=shared \
       --without-readline \
@@ -729,7 +742,10 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/php-fpm
 for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
     mbstring gd dom xsl soap bcmath dba xmlreader xmlwriter \
     pdo pdo_mysql pdo_pgsql pdo_odbc pdo_sqlite json zip \
-    sqlite3 enchant phar fileinfo intl \
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
+    sqlite3  \
+%endif
+    enchant phar fileinfo intl \
     tidy pspell curl wddx \
     posix sysvshm sysvsem sysvmsg recode; do
     cat > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini <<EOF
@@ -759,7 +775,9 @@ cat files.sysv* files.posix > files.process
 # Package sqlite3 and pdo_sqlite with pdo; isolating the sqlite dependency
 # isn't useful at this time since rpm itself requires sqlite.
 cat files.pdo_sqlite >> files.pdo
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 cat files.sqlite3 >> files.pdo
+%endif
 
 # Package json, zip, curl, phar and fileinfo in -common.
 cat files.json files.zip files.curl files.phar files.fileinfo > files.common
