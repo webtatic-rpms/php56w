@@ -935,6 +935,10 @@ fi
 %files enchant -f files.enchant
 
 %changelog
+* Sun Jun 09 2013 Andy Thompson <andy@webtatic.com> - 5.4.16-1
+- update to php-5.4.16
+- Add provides hints for all packages back to php prefix
+
 * Sun May 26 2013 Andy Thompson <andy@webtatic.com> - 5.4.15-2
 - Update aclocal to use EL5 libtool files on EL5
 - Remove sqlite3 extension if RHEL < 6
