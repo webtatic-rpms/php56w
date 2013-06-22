@@ -25,7 +25,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
 Version: 5.5.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -423,7 +423,7 @@ support for using the recode library to PHP.
 Summary: Internationalization extension for PHP applications
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
-BuildRequires: libicu-devel >= 3.6
+BuildRequires: libicu-devel >= 4.0
 Provides: php-intl = %{version}-%{release}
 
 %description intl
@@ -962,6 +962,9 @@ fi
 %files enchant -f files.enchant
 
 %changelog
+* Sat Jun 22 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-2
+- Fix ICU dependency version for EL5
+
 * Thu Jun 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-1
 - fork php54w package
 - update to php-5.5.0
