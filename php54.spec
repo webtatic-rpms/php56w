@@ -570,30 +570,19 @@ ln -sf ../configure
 	--with-pic \
 	--disable-rpath \
 	--without-pear \
-	--with-bz2 \
 	--with-exec-dir=%{_bindir} \
 	--with-freetype-dir=%{_prefix} \
 	--with-png-dir=%{_prefix} \
 	--with-xpm-dir=%{_prefix} \
 	--enable-gd-native-ttf \
 	--without-gdbm \
-	--with-gettext \
-	--with-gmp \
-	--with-iconv \
 	--with-jpeg-dir=%{_prefix} \
 	--with-openssl \
         --with-pcre-regex \
 	--with-zlib \
 	--with-layout=GNU \
-	--enable-exif \
-	--enable-ftp \
-	--enable-sockets \
-	--enable-sysvsem --enable-sysvshm --enable-sysvmsg \
 	--with-kerberos \
-	--enable-shmop \
-	--enable-calendar \
         --with-libxml-dir=%{_prefix} \
-	--enable-xml \
         --with-system-tzdata \
 	$* 
 if test $? != 0; then 
@@ -609,14 +598,26 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --enable-mbstring=shared \
       --enable-mbregex \
       --with-gd=shared \
+      --with-gmp=shared \
+      --enable-calendar=shared \
       --enable-bcmath=shared \
+      --with-bz2=shared \
+      --enable-ctype=shared \
       --enable-dba=shared --with-db4=%{_prefix} \
+      --enable-exif=shared \
+      --enable-ftp=shared \
+      --with-gettext=shared \
+      --with-iconv=shared \
+      --enable-sockets=shared \
+      --enable-tokenizer=shared \
       --with-xmlrpc=shared \
       --with-ldap=shared --with-ldap-sasl \
       --with-mysql=shared,%{_prefix} \
       --with-mysqli=shared,%{mysql_config} \
       --enable-dom=shared \
       --with-pgsql=shared \
+      --enable-simplexml=shared \
+      --enable-xml=shared \
       --enable-wddx=shared \
       --with-snmp=shared,%{_prefix} \
       --enable-soap=shared \
@@ -639,6 +640,7 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --enable-phar=shared \
       --with-tidy=shared,%{_prefix} \
       --enable-sysvmsg=shared --enable-sysvshm=shared --enable-sysvsem=shared \
+      --enable-shmop=shared \
       --enable-posix=shared \
       --with-unixODBC=shared,%{_prefix} \
       --enable-fileinfo=shared \
@@ -652,7 +654,10 @@ without_shared="--without-mysql --without-gd \
       --disable-pdo --disable-xmlreader --disable-xmlwriter \
       --without-sqlite3 --disable-phar --disable-fileinfo \
       --disable-json --without-pspell --disable-wddx \
-      --without-curl --disable-posix \
+      --without-curl --disable-posix --disable-xml \
+      --disable-simplexml --disable-exif --without-gettext \
+      --without-iconv --disable-ftp --without-bz2 --disable-ctype \
+      --disable-shmop --disable-sockets --disable-tokenizer \
       --disable-sysvmsg --disable-sysvshm --disable-sysvsem"
 
 # Build /usr/bin/php-cgi with the CGI SAPI, and all the shared extensions
@@ -740,6 +745,7 @@ make -C build-ztscli install \
 mv $RPM_BUILD_ROOT%{_bindir}/php        $RPM_BUILD_ROOT%{_bindir}/zts-php
 mv $RPM_BUILD_ROOT%{_bindir}/phpize     $RPM_BUILD_ROOT%{_bindir}/zts-phpize
 mv $RPM_BUILD_ROOT%{_bindir}/php-config $RPM_BUILD_ROOT%{_bindir}/zts-php-config
+%endif
 
 # Install the version for embedded script language in applications + php_embed.h
 make -C build-embedded install-sapi install-headers INSTALL_ROOT=$RPM_BUILD_ROOT
@@ -806,13 +812,15 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/php-fpm
 # Generate files lists and stub .ini files for each subpackage
 for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
     mbstring gd dom xsl soap bcmath dba xmlreader xmlwriter \
+    bz2 calendar ctype exif ftp gettext gmp iconv simplexml \
+    sockets tokenizer \
     pdo pdo_mysql pdo_pgsql pdo_odbc pdo_sqlite json zip \
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
     sqlite3  \
 %endif
     enchant phar fileinfo intl \
     tidy pspell curl wddx \
-    posix sysvshm sysvsem sysvmsg recode; do
+    posix shmop sysvshm sysvsem sysvmsg recode xml; do
     cat > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini <<EOF
 ; Enable ${mod} extension module
 extension=${mod}.so
@@ -830,6 +838,8 @@ EOF
 %endif
 EOF
 done
+
+mv files.xml files.xmlext
 
 # The dom, xsl and xml* modules are all packaged in php-xml
 cat files.dom files.xsl files.xml{reader,writer} files.wddx > files.xml
@@ -852,8 +862,11 @@ cat files.pdo_sqlite >> files.pdo
 cat files.sqlite3 >> files.pdo
 %endif
 
-# Package json, zip, curl, phar and fileinfo in -common.
-cat files.json files.zip files.curl files.phar files.fileinfo > files.common
+# Package most extensions in -common.
+cat files.json files.zip files.curl files.phar files.fileinfo \
+    files.bz2 files.calendar files.ctype files.exif files.ftp files.gettext \
+    files.gmp files.iconv files.simplexml files.shmop files.xmlext \
+    files.sockets files.tokenizer > files.common
 
 # Install the macros file:
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/rpm
