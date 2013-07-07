@@ -1152,6 +1152,10 @@ fi
 %changelog
 * Sun Jul 07 2013 Andy Thompson <andy@webtatic.com> - 5.4.17-1
 - update to php-5.4.17
+- Fix ZTS build, so it's included in mod_php and has shared extensions.
+- Move several built-in extensions to shared extensions.
+- Merge php54w-extras into package.
+- Add mysqlnd-linked mysql, mysqli, pdo_mysql extensions
 
 * Sun Jun 09 2013 Andy Thompson <andy@webtatic.com> - 5.4.16-1
 - update to php-5.4.16
