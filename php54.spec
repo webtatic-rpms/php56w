@@ -453,7 +453,7 @@ cp ext/ereg/regex/COPYRIGHT regex_COPYRIGHT
 cp ext/gd/libgd/README gd_README
 
 # Multiple builds for multiple SAPIs
-mkdir build-cgi build-apache build-embedded \
+mkdir build-cli build-apache build-embedded \
 %if %{with_zts}
     build-ztscli build-zts \
 %endif
@@ -660,8 +660,9 @@ without_shared="--without-mysql --without-gd \
       --disable-shmop --disable-sockets --disable-tokenizer \
       --disable-sysvmsg --disable-sysvshm --disable-sysvsem"
 
-# Build /usr/bin/php-cgi with the CGI SAPI, and all the shared extensions
-pushd build-cgi
+# Build /usr/bin/php with the CLI SAPI, /usr/bin/php-cgi with the CGI SAPI, and
+# all the shared extensions
+pushd build-cli
 build --enable-force-cgi-redirect \
       --enable-pcntl \
       --enable-fastcgi \
@@ -670,7 +671,7 @@ build --enable-force-cgi-redirect \
       ${with_shared}
 popd
 
-# Build Apache module, and the CLI SAPI, /usr/bin/php
+# Build Apache module
 pushd build-apache
 build --with-apxs2=%{_sbindir}/apxs ${without_shared}
 popd
@@ -755,8 +756,8 @@ make -C build-embedded install-sapi install-headers INSTALL_ROOT=$RPM_BUILD_ROOT
 make -C build-fpm install-fpm INSTALL_ROOT=$RPM_BUILD_ROOT
 %endif
 
-# Install everything from the CGI SAPI build
-make -C build-cgi install INSTALL_ROOT=$RPM_BUILD_ROOT 
+# Install everything from the CLI/CGI SAPI build
+make -C build-cli install INSTALL_ROOT=$RPM_BUILD_ROOT 
 
 # Install the default configuration file and icons
 install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/
