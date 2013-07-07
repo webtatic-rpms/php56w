@@ -220,6 +220,7 @@ BuildRequires: mysql-devel < 5.2
 %else
 BuildRequires: mysql-devel < 5.1
 %endif
+Conflicts: %{name}-mysqlnd
 
 %description mysql
 The %{name}-mysql package contains a dynamic shared object that will add
@@ -227,6 +228,31 @@ MySQL database support to PHP. MySQL is an object-relational database
 management system. PHP is an HTML-embeddable scripting language. If
 you need MySQL support for PHP applications, you will need to install
 this package and the %{name} package.
+
+%package mysqlnd
+Summary: A module for PHP applications that use MySQL databases
+Group: Development/Languages
+# All files licensed under PHP version 3.01
+License: PHP
+Requires: %{name}-pdo = %{version}-%{release}
+Provides: php-mysqlnd = %{version}-%{release}
+Provides: php_database, php-pdo_mysql
+Provides: %{name}-mysql = %{version}-%{release}
+Provides: php-mysql = %{version}-%{release}
+Provides: %{name}-mysqli = %{version}-%{release}
+Provides: php-mysqli = %{version}-%{release}
+
+# override mysql 5.5 extension build, which is no longer maintained
+Obsoletes: %{name}-mysql55
+
+%description mysqlnd
+The php-mysqlnd package contains a dynamic shared object that will add
+MySQL database support to PHP. MySQL is an object-relational database
+management system. PHP is an HTML-embeddable scripting language. If
+you need MySQL support for PHP applications, you will need to install
+this package and the php package.
+
+This package use the MySQL Native Driver
 
 %package pgsql
 Summary: A PostgreSQL database module for PHP
@@ -665,8 +691,9 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --enable-tokenizer=shared \
       --with-xmlrpc=shared \
       --with-ldap=shared --with-ldap-sasl \
-      --with-mysql=shared,%{_prefix} \
-      --with-mysqli=shared,%{mysql_config} \
+      --enable-mysqlnd=shared \
+      --with-mysql=shared,mysqlnd \
+      --with-mysqli=shared,mysqlnd \
       --with-interbase=shared,%{_libdir}/firebird \
       --with-pdo-firebird=shared,%{_libdir}/firebird \
       --enable-dom=shared \
@@ -681,7 +708,7 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --with-curl=shared,%{_prefix} \
       --enable-pdo=shared \
       --with-pdo-odbc=shared,unixODBC,%{_prefix} \
-      --with-pdo-mysql=shared,%{mysql_config} \
+      --with-pdo-mysql=shared,mysqlnd \
       --with-pdo-pgsql=shared,%{_prefix} \
       --with-pdo-sqlite=shared,%{_prefix} \
       --with-pdo-dblib=shared,%{_prefix} \
@@ -707,9 +734,15 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --with-enchant=shared,%{_prefix} \
       --with-recode=shared,%{_prefix}"
 
-without_shared="--without-mysql --without-gd \
+with_shared2="--enable-pdo=shared \
+      --with-mysql=shared,%{_prefix} \
+      --with-mysqli=shared,%{mysql_config} \
+      --with-pdo-mysql=shared,%{mysql_config} \
+      --without-pdo-sqlite"
+
+without_shared="--without-gd \
       --disable-dom --disable-dba --without-unixODBC \
-      --disable-pdo --disable-xmlreader --disable-xmlwriter \
+      --disable-xmlreader --disable-xmlwriter \
       --without-sqlite3 --disable-phar --disable-fileinfo \
       --disable-json --without-pspell --disable-wddx \
       --without-curl --disable-posix --disable-xml \
@@ -731,20 +764,24 @@ popd
 
 # Build Apache module
 pushd build-apache
-build --with-apxs2=%{_sbindir}/apxs ${without_shared}
+build --with-apxs2=%{_sbindir}/apxs ${with_shared2} ${without_shared}
 popd
 
 %if %{with_fpm}
 # Build php-fpm
 pushd build-fpm
-build --enable-fpm ${without_shared}
+build --enable-fpm \
+      --without-mysql --disable-pdo \
+      ${without_shared}
 popd
 %endif
 
 # Build for inclusion as embedded script language into applications,
 # /usr/lib[64]/libphp5.so
 pushd build-embedded
-build --enable-embed ${without_shared}
+build --enable-embed \
+      --without-mysql --disable-pdo \
+      ${without_shared}
 popd
 
 %if %{with_zts}
@@ -801,6 +838,18 @@ unset NO_INTERACTION REPORT_EXIT_STATUS MALLOC_CHECK_
 make -C build-ztscli install \
      INSTALL_ROOT=$RPM_BUILD_ROOT
 
+# rename extensions build with mysqlnd
+mv $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/mysql.so \
+   $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/mysqlnd_mysql.so
+mv $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/mysqli.so \
+   $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/mysqlnd_mysqli.so
+mv $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/pdo_mysql.so \
+   $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/pdo_mysqlnd.so
+
+# Install the extensions for the ZTS version modules for libmysql
+make -C build-zts install-modules \
+     INSTALL_ROOT=$RPM_BUILD_ROOT
+
 mv $RPM_BUILD_ROOT%{_bindir}/php        $RPM_BUILD_ROOT%{_bindir}/zts-php
 mv $RPM_BUILD_ROOT%{_bindir}/phpize     $RPM_BUILD_ROOT%{_bindir}/zts-phpize
 mv $RPM_BUILD_ROOT%{_bindir}/php-config $RPM_BUILD_ROOT%{_bindir}/zts-php-config
@@ -815,7 +864,19 @@ make -C build-fpm install-fpm INSTALL_ROOT=$RPM_BUILD_ROOT
 %endif
 
 # Install everything from the CLI/CGI SAPI build
-make -C build-cli install INSTALL_ROOT=$RPM_BUILD_ROOT 
+make -C build-cli install INSTALL_ROOT=$RPM_BUILD_ROOT
+
+# rename extensions build with mysqlnd
+mv $RPM_BUILD_ROOT%{_libdir}/php/modules/mysql.so \
+   $RPM_BUILD_ROOT%{_libdir}/php/modules/mysqlnd_mysql.so
+mv $RPM_BUILD_ROOT%{_libdir}/php/modules/mysqli.so \
+   $RPM_BUILD_ROOT%{_libdir}/php/modules/mysqlnd_mysqli.so
+mv $RPM_BUILD_ROOT%{_libdir}/php/modules/pdo_mysql.so \
+   $RPM_BUILD_ROOT%{_libdir}/php/modules/pdo_mysqlnd.so
+
+# Install the mysql extension build with libmysql
+make -C build-apache install-modules \
+     INSTALL_ROOT=$RPM_BUILD_ROOT
 
 # Install the default configuration file and icons
 install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/
@@ -870,6 +931,7 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/php-fpm
 
 # Generate files lists and stub .ini files for each subpackage
 for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
+    mysqlnd mysqlnd_mysql mysqlnd_mysqli pdo_mysqlnd \
     mbstring gd dom xsl soap bcmath dba xmlreader xmlwriter \
     bz2 calendar ctype exif ftp gettext gmp iconv simplexml \
     sockets tokenizer \
@@ -906,6 +968,12 @@ cat files.dom files.xsl files.xml{reader,writer} files.wddx > files.xml
 
 # The mysql and mysqli modules are both packaged in php-mysql
 cat files.mysqli >> files.mysql
+
+# mysqlnd
+cat files.mysqlnd_mysql \
+    files.mysqlnd_mysqli \
+    files.pdo_mysqlnd \
+    >> files.mysqlnd
 
 # Split out the PDO modules
 cat files.pdo_dblib >> files.mssql
@@ -1067,6 +1135,7 @@ fi
 %files recode -f files.recode
 %files interbase -f files.interbase
 %files enchant -f files.enchant
+%files mysqlnd -f files.mysqlnd
 
 %changelog
 * Sun Jul 07 2013 Andy Thompson <andy@webtatic.com> - 5.4.17-1
