@@ -285,6 +285,29 @@ Provides: php-soap = %{version}-%{release}
 The %{name}-soap package contains a dynamic shared object that will add
 support to PHP for using the SOAP web services protocol.
 
+%package interbase
+Summary: A module for PHP applications that use Interbase/Firebird databases
+Group: Development/Languages
+# All files licensed under PHP version 3.01
+License: PHP
+BuildRequires: firebird-devel
+Requires: %{name}-pdo = %{version}-%{release}
+Provides: php-firebird  = %{version}-%{release}
+Provides: php_database, php-pdo_firebird
+
+%description interbase
+The php-interbase package contains a dynamic shared object that will add
+database support through Interbase/Firebird to PHP.
+
+InterBase is the name of the closed-source variant of this RDBMS that was
+developed by Borland/Inprise.
+
+Firebird is a commercially independent project of C and C++ programmers,
+technical advisors and supporters developing and enhancing a multi-platform
+relational database management system based on the source code released by
+Inprise Corp (now known as Borland Software Corp) under the InterBase Public
+License.
+
 %package snmp
 Summary: A module for PHP applications that query SNMP-managed devices
 Group: Development/Languages
@@ -363,6 +386,19 @@ Provides: php-dba = %{version}-%{release}
 The %{name}-dba package contains a dynamic shared object that will add
 support for using the DBA database abstraction layer to PHP.
 
+%package mcrypt
+Summary: Standard PHP module provides mcrypt library support
+Group: Development/Languages
+# All files licensed under PHP version 3.01
+License: PHP
+Requires: %{name}-common = %{version}-%{release}
+Provides: php-mcrypt = %{version}-%{release}
+BuildRequires: libmcrypt-devel
+
+%description mcrypt
+The php-mcrypt package contains a dynamic shared object that will add
+support for using the mcrypt library to PHP.
+
 %package tidy
 Summary: Standard PHP module provides tidy library support
 Group: Development/Languages
@@ -373,6 +409,22 @@ Provides: php-tidy = %{version}-%{release}
 %description tidy
 The %{name}-tidy package contains a dynamic shared object that will add
 support for using the tidy library to PHP.
+
+%package mssql
+Summary: MSSQL database module for PHP
+Group: Development/Languages
+# All files licensed under PHP version 3.01
+License: PHP
+Requires: %{name}-pdo = %{version}-%{release}
+BuildRequires: freetds-devel
+Provides: php-mssql = %{version}-%{release}
+Provides: php_database, php-pdo_dblib
+
+%description mssql
+The php-mssql package contains a dynamic shared object that will
+add MSSQL database support to PHP.  It uses the TDS (Tabular
+DataStream) protocol through the freetds library, hence any
+database server which supports TDS can be accessed.
 
 %package embedded
 Summary: PHP library for embedding in applications
@@ -615,6 +667,8 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --with-ldap=shared --with-ldap-sasl \
       --with-mysql=shared,%{_prefix} \
       --with-mysqli=shared,%{mysql_config} \
+      --with-interbase=shared,%{_libdir}/firebird \
+      --with-pdo-firebird=shared,%{_libdir}/firebird \
       --enable-dom=shared \
       --with-pgsql=shared \
       --enable-simplexml=shared \
@@ -630,6 +684,7 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --with-pdo-mysql=shared,%{mysql_config} \
       --with-pdo-pgsql=shared,%{_prefix} \
       --with-pdo-sqlite=shared,%{_prefix} \
+      --with-pdo-dblib=shared,%{_prefix} \
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
       --with-sqlite3=shared,%{_prefix} \
 %else
@@ -639,7 +694,9 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --enable-zip=shared \
       --with-pspell=shared \
       --enable-phar=shared \
+      --with-mcrypt=shared,%{_prefix} \
       --with-tidy=shared,%{_prefix} \
+      --with-mssql=shared,%{_prefix} \
       --enable-sysvmsg=shared --enable-sysvshm=shared --enable-sysvsem=shared \
       --enable-shmop=shared \
       --enable-posix=shared \
@@ -820,8 +877,9 @@ for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
     sqlite3  \
 %endif
+    interbase pdo_firebird \
     enchant phar fileinfo intl \
-    tidy pspell curl wddx \
+    mcrypt tidy pdo_dblib mssql pspell curl wddx \
     posix shmop sysvshm sysvsem sysvmsg recode xml; do
     cat > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini <<EOF
 ; Enable ${mod} extension module
@@ -850,9 +908,11 @@ cat files.dom files.xsl files.xml{reader,writer} files.wddx > files.xml
 cat files.mysqli >> files.mysql
 
 # Split out the PDO modules
+cat files.pdo_dblib >> files.mssql
 cat files.pdo_mysql >> files.mysql
 cat files.pdo_pgsql >> files.pgsql
 cat files.pdo_odbc >> files.odbc
+cat files.pdo_firebird >> files.interbase
 
 # sysv* and posix in packaged in php-process
 cat files.sysv* files.posix > files.process
@@ -998,11 +1058,14 @@ fi
 %files bcmath -f files.bcmath
 %files dba -f files.dba
 %files pdo -f files.pdo
+%files mcrypt -f files.mcrypt
 %files tidy -f files.tidy
+%files mssql -f files.mssql
 %files pspell -f files.pspell
 %files intl -f files.intl
 %files process -f files.process
 %files recode -f files.recode
+%files interbase -f files.interbase
 %files enchant -f files.enchant
 
 %changelog
