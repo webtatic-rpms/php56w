@@ -42,13 +42,10 @@ Source6: php-fpm.init
 Source7: php-fpm.logrotate
 
 # Build fixes
-Patch1: php-5.4.1-gnusrc.patch
-Patch2: php-5.3.0-install.patch
-Patch3: php-5.2.4-norpath.patch
-Patch4: php-5.4.0-phpize64.patch
 Patch5: php-5.2.0-includedir.patch
 Patch6: php-5.2.4-embed.patch
 Patch7: php-5.3.0-recode.patch
+Patch8: php-5.4.7-libdb.patch
 
 # Fixes for extensions
 
@@ -56,6 +53,14 @@ Patch7: php-5.3.0-recode.patch
 Patch40: php-5.0.4-dlopen.patch
 Patch41: php-5.3.0-easter.patch
 Patch42: php-5.3.1-systzdata-v7.patch
+# See http://bugs.php.net/53436
+Patch43: php-5.4.0-phpize.patch
+# Use -lldap_r for OpenLDAP
+Patch45: php-5.4.8-ldap_r.patch
+# Make php_config.h constant across builds
+Patch46: php-5.4.9-fixheader.patch
+# drop "Configure command" from phpinfo output
+Patch47: php-5.4.9-phpinfo.patch
 
 # Fixes for tests
 Patch61: php-5.0.4-tests-wddx.patch
@@ -511,17 +516,20 @@ support for using the enchant library to PHP.
 
 %prep
 %setup -q -n php-%{version}
-%patch1 -p1 -b .gnusrc
-%patch2 -p1 -b .install
-%patch3 -p1 -b .norpath
-%patch4 -p1 -b .phpize64
 %patch5 -p1 -b .includedir
 %patch6 -p1 -b .embed
 %patch7 -p1 -b .recode
+%patch8 -p1 -b .libdb
 
 %patch40 -p1 -b .dlopen
 %patch41 -p1 -b .easter
 %patch42 -p1 -b .systzdata
+%patch43 -p1 -b .phpize
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
+%patch45 -p1 -b .ldap_r
+%endif
+%patch46 -p1 -b .fixheader
+%patch47 -p1 -b .phpinfo
 
 %patch61 -p1 -b .tests-wddx
 
@@ -755,6 +763,7 @@ without_shared="--without-gd \
 # all the shared extensions
 pushd build-cli
 build --enable-force-cgi-redirect \
+      --libdir=%{_libdir}/php \
       --enable-pcntl \
       --enable-fastcgi \
       --without-readline \
@@ -764,13 +773,16 @@ popd
 
 # Build Apache module
 pushd build-apache
-build --with-apxs2=%{_sbindir}/apxs ${with_shared2} ${without_shared}
+build --with-apxs2=%{_sbindir}/apxs \
+      --libdir=%{_libdir}/php \
+      ${with_shared2} ${without_shared}
 popd
 
 %if %{with_fpm}
 # Build php-fpm
 pushd build-fpm
 build --enable-fpm \
+      --libdir=%{_libdir}/php \
       --without-mysql --disable-pdo \
       ${without_shared}
 popd
