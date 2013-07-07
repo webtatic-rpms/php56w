@@ -77,6 +77,7 @@ BuildRequires: sqlite-devel >= 3.0.0
 %endif
 BuildRequires: zlib-devel, pcre-devel >= 6.6, smtpdaemon, libedit-devel
 BuildRequires: bzip2, perl, libtool >= 1.4.3, gcc-c++
+BuildRequires: libtool-ltdl-devel
 Requires: httpd-mmn = %{httpd_mmn}
 Provides: php = %{version}-%{release}
 Provides: mod_php = %{version}-%{release}
