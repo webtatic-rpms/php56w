@@ -1001,6 +1001,9 @@ install -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/php-fpm
 
 # Copy stub .ini file for opcache
 install -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/php.d/opcache.ini
+%if %{with_zts}
+install -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/opcache.ini
+%endif
 
 # Generate files lists and stub .ini files for each subpackage
 for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
@@ -1187,6 +1190,10 @@ fi
 %defattr(-,root,root)
 %attr(755,root,root) %{_libdir}/php/modules/opcache.so
 %config(noreplace) %{_sysconfdir}/php.d/opcache.ini
+%if %{with_zts}
+%attr(755,root,root) %{_libdir}/php-zts/modules/opcache.so
+%config(noreplace) %{_sysconfdir}/php-zts.d/opcache.ini
+%endif
 
 %files pgsql -f files.pgsql
 %files mysql -f files.mysql
