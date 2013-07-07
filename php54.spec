@@ -21,6 +21,9 @@
 %global with_fpm 0
 %endif
 
+# Build ZTS extension or only NTS
+%global with_zts      1
+
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
 Version: 5.4.17
@@ -83,6 +86,15 @@ Requires: %{name}-cli = %{version}-%{release}
 # To ensure correct /var/lib/php/session ownership:
 Requires(pre): httpd
 
+%if %{with_zts}
+# obsolete and provide ZTS
+Obsoletes: %{name}-zts < 5.4.17-1
+Provides: %{name}-zts = %{version}-%{release}
+Provides: php-zts = %{version}-%{release}
+Provides: %{name}-zts = %{version}-%{release}
+Provides: php-zts = %{version}-%{release}
+%endif
+
 %description
 PHP is an HTML-embedded scripting language. PHP attempts to make it
 easy for developers to write dynamically generated webpages. PHP also
@@ -105,18 +117,6 @@ Provides: php-pcntl, php-readline
 %description cli
 The %{name}-cli package contains the command-line interface 
 executing PHP scripts, /usr/bin/php, and the CGI interface.
-
-%package zts
-Group: Development/Languages
-Summary: Thread-safe PHP interpreter for use with the Apache HTTP Server
-Requires: %{name}-common = %{version}-%{release}
-Requires: httpd-mmn = %{httpd_mmn}
-BuildRequires: libtool-ltdl-devel
-Provides: php-zts = %{version}-%{release}
-
-%description zts
-The %{name}-zts package contains a module for use with the Apache HTTP
-Server which can operate under a threaded server processing model.
 
 %if %{with_fpm}
 %package fpm
@@ -453,7 +453,10 @@ cp ext/ereg/regex/COPYRIGHT regex_COPYRIGHT
 cp ext/gd/libgd/README gd_README
 
 # Multiple builds for multiple SAPIs
-mkdir build-cgi build-apache build-embedded build-zts \
+mkdir build-cgi build-apache build-embedded \
+%if %{with_zts}
+    build-ztscli build-zts \
+%endif
 %if %{with_fpm}
     build-fpm
 %endif
@@ -568,6 +571,7 @@ ln -sf ../configure
 	--disable-rpath \
 	--without-pear \
 	--with-bz2 \
+	--with-exec-dir=%{_bindir} \
 	--with-freetype-dir=%{_prefix} \
 	--with-png-dir=%{_prefix} \
 	--with-xpm-dir=%{_prefix} \
@@ -601,11 +605,7 @@ fi
 make %{?_smp_mflags}
 }
 
-# Build /usr/bin/php-cgi with the CGI SAPI, and all the shared extensions
-pushd build-cgi
-build --enable-force-cgi-redirect \
-      --enable-pcntl \
-      --with-imap=shared --with-imap-ssl \
+with_shared="--with-imap=shared --with-imap-ssl \
       --enable-mbstring=shared \
       --enable-mbregex \
       --with-gd=shared \
@@ -623,7 +623,6 @@ build --enable-force-cgi-redirect \
       --with-xsl=shared,%{_prefix} \
       --enable-xmlreader=shared --enable-xmlwriter=shared \
       --with-curl=shared,%{_prefix} \
-      --enable-fastcgi \
       --enable-pdo=shared \
       --with-pdo-odbc=shared,unixODBC,%{_prefix} \
       --with-pdo-mysql=shared,%{mysql_config} \
@@ -636,8 +635,6 @@ build --enable-force-cgi-redirect \
 %endif
       --enable-json=shared \
       --enable-zip=shared \
-      --without-readline \
-      --with-libedit \
       --with-pspell=shared \
       --enable-phar=shared \
       --with-tidy=shared,%{_prefix} \
@@ -648,8 +645,7 @@ build --enable-force-cgi-redirect \
       --enable-intl=shared \
       --with-icu-dir=%{_prefix} \
       --with-enchant=shared,%{_prefix} \
-      --with-recode=shared,%{_prefix}
-popd
+      --with-recode=shared,%{_prefix}"
 
 without_shared="--without-mysql --without-gd \
       --disable-dom --disable-dba --without-unixODBC \
@@ -658,6 +654,16 @@ without_shared="--without-mysql --without-gd \
       --disable-json --without-pspell --disable-wddx \
       --without-curl --disable-posix \
       --disable-sysvmsg --disable-sysvshm --disable-sysvsem"
+
+# Build /usr/bin/php-cgi with the CGI SAPI, and all the shared extensions
+pushd build-cgi
+build --enable-force-cgi-redirect \
+      --enable-pcntl \
+      --enable-fastcgi \
+      --without-readline \
+      --with-libedit \
+      ${with_shared}
+popd
 
 # Build Apache module, and the CLI SAPI, /usr/bin/php
 pushd build-apache
@@ -677,16 +683,34 @@ pushd build-embedded
 build --enable-embed ${without_shared}
 popd
 
+%if %{with_zts}
+# Build a special thread-safe cli (mainly for modules)
+pushd build-ztscli
+EXTENSION_DIR=%{_libdir}/php-zts/modules
+build --enable-force-cgi-redirect \
+      --enable-pcntl \
+      --enable-fastcgi \
+      --without-readline \
+      --with-libedit \
+      --includedir=%{_includedir}/php-zts \
+      --libdir=%{_libdir}/php-zts \
+      --enable-maintainer-zts \
+      --with-config-file-scan-dir=%{_sysconfdir}/php-zts.d \
+      ${with_shared}
+popd
+
 # Build a special thread-safe Apache SAPI
 pushd build-zts
-EXTENSION_DIR=%{_libdir}/php/modules-zts
-build --with-apxs2=%{_sbindir}/apxs ${without_shared} \
+build --with-apxs2=%{_sbindir}/apxs  ${with_shared2} ${without_shared} \
+      --includedir=%{_includedir}/php-zts \
+      --libdir=%{_libdir}/php-zts \
       --enable-maintainer-zts \
       --with-config-file-scan-dir=%{_sysconfdir}/php-zts.d
 popd
 
 ### NOTE!!! EXTENSION_DIR was changed for the -zts build, so it must remain
 ### the last SAPI to be built.
+%endif
 
 %check
 cd build-apache
@@ -707,6 +731,15 @@ unset NO_INTERACTION REPORT_EXIT_STATUS MALLOC_CHECK_
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
+
+%if %{with_zts}
+# Install the extensions for the ZTS version
+make -C build-ztscli install \
+     INSTALL_ROOT=$RPM_BUILD_ROOT
+
+mv $RPM_BUILD_ROOT%{_bindir}/php        $RPM_BUILD_ROOT%{_bindir}/zts-php
+mv $RPM_BUILD_ROOT%{_bindir}/phpize     $RPM_BUILD_ROOT%{_bindir}/zts-phpize
+mv $RPM_BUILD_ROOT%{_bindir}/php-config $RPM_BUILD_ROOT%{_bindir}/zts-php-config
 
 # Install the version for embedded script language in applications + php_embed.h
 make -C build-embedded install-sapi install-headers INSTALL_ROOT=$RPM_BUILD_ROOT
@@ -733,15 +766,19 @@ install -m 755 -d $RPM_BUILD_ROOT%{_libdir}/php/pear \
 install -m 755 -d $RPM_BUILD_ROOT%{_libdir}/httpd/modules
 install -m 755 build-apache/libs/libphp5.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules
 
+%if %{with_zts}
 # install the ZTS DSO
 install -m 755 build-zts/libs/libphp5.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules/libphp5-zts.so
+%endif
 
 # Apache config fragment
 install -m 755 -d $RPM_BUILD_ROOT/etc/httpd/conf.d
 install -m 644 $RPM_SOURCE_DIR/php.conf $RPM_BUILD_ROOT/etc/httpd/conf.d
 
 install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/php.d
-#install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d
+%if %{with_zts}
+install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d
+%endif
 install -m 755 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php
 install -m 700 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/session
 
@@ -780,9 +817,17 @@ for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
 ; Enable ${mod} extension module
 extension=${mod}.so
 EOF
+%if %{with_zts}
+    cp $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini \
+       $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/${mod}.ini
+%endif
     cat > files.${mod} <<EOF
 %attr(755,root,root) %{_libdir}/php/modules/${mod}.so
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/php.d/${mod}.ini
+%if %{with_zts}
+%attr(755,root,root) %{_libdir}/php-zts/modules/${mod}.so
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php-zts.d/${mod}.ini
+%endif
 EOF
 done
 
@@ -819,6 +864,7 @@ install -m 644 -c macros.php \
 
 # Remove unpackaged files
 rm -rf $RPM_BUILD_ROOT%{_libdir}/php/modules/*.a \
+       $RPM_BUILD_ROOT%{_libdir}/php-zts/modules/*.a \
        $RPM_BUILD_ROOT%{_bindir}/{phptar} \
        $RPM_BUILD_ROOT%{_datadir}/pear \
        $RPM_BUILD_ROOT%{_libdir}/libphp5.la
@@ -847,6 +893,9 @@ fi
 %files
 %defattr(-,root,root)
 %{_libdir}/httpd/modules/libphp5.so
+%if %{with_zts}
+%{_libdir}/httpd/modules/libphp5-zts.so
+%endif
 %attr(0770,root,apache) %dir %{_localstatedir}/lib/php/session
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/php.conf
 %{contentdir}/icons/php.gif
@@ -858,10 +907,13 @@ fi
 %doc php.ini-production php.ini-development
 %config(noreplace) %{_sysconfdir}/php.ini
 %dir %{_sysconfdir}/php.d
-#dir %{_sysconfdir}/php-zts.d
 %dir %{_libdir}/php
 %dir %{_libdir}/php/modules
-#dir %{_libdir}/php/modules-zts
+%if %{with_zts}
+#dir %{_sysconfdir}/php-zts.d
+%dir %{_libdir}/php-zts
+#dir %{_libdir}/php-zts/modules
+%endif
 %dir %{_localstatedir}/lib/php
 %dir %{_libdir}/php/pear
 %dir %{_datadir}/php
@@ -874,10 +926,6 @@ fi
 %{_bindir}/phar
 %{_mandir}/man1/php.1*
 %doc sapi/cgi/README* sapi/cli/README
-
-%files zts
-%defattr(-,root,root)
-%{_libdir}/httpd/modules/libphp5-zts.so
 
 %if %{with_fpm}
 %files fpm
@@ -902,6 +950,14 @@ fi
 %{_bindir}/phpize
 %{_includedir}/php
 %{_libdir}/php/build
+%if %{with_zts}
+%{_bindir}/zts-php-config
+%{_bindir}/zts-phpize
+# useful only to test other module during build
+%{_bindir}/zts-php
+%{_includedir}/php-zts
+%{_libdir}/php-zts/build
+%endif
 %{_mandir}/man1/php-config.1*
 %{_mandir}/man1/phpize.1*
 %config %{_sysconfdir}/rpm/macros.php
