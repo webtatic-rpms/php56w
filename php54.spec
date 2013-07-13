@@ -119,6 +119,9 @@ Requires: %{name}-common = %{version}-%{release}
 Provides: php-cli = %{version}-%{release}
 Provides: php-cgi = %{version}-%{release}, php-cli = %{version}-%{release}
 Provides: php-pcntl, php-readline
+# Additional Provides for this package name
+Provides: %{name}-cgi = %{version}-%{release}
+Provides: %{name}-pcntl, %{name}-readline
 
 %description cli
 The %{name}-cli package contains the command-line interface 
@@ -155,6 +158,18 @@ Provides: php-pecl-json = %{jsonver}, php-pecl(json) = %{jsonver}
 Provides: php-pecl-zip = %{zipver}, php-pecl(zip) = %{zipver}
 Provides: php-pecl-phar = %{pharver}, php-pecl(phar) = %{pharver}
 Provides: php-pecl-Fileinfo = %{fileinfover}, php-pecl(Fileinfo) = %{fileinfover}
+# Additional Provides for this package name
+# Provides for all builtin modules:
+Provides: %{name}-bz2, %{name}-calendar, %{name}-ctype, %{name}-curl, %{name}-date, %{name}-exif
+Provides: %{name}-ftp, %{name}-gettext, %{name}-gmp, %{name}-hash, %{name}-iconv, %{name}-libxml
+Provides: %{name}-reflection, %{name}-session, %{name}-shmop, %{name}-simplexml, %{name}-sockets
+Provides: %{name}-spl, %{name}-tokenizer, %{name}-openssl, %{name}-pcre
+Provides: %{name}-zlib, %{name}-json, %{name}-zip, %{name}-fileinfo
+# For obsoleted pecl extension
+Provides: %{name}-pecl-json = %{jsonver}, %{name}-pecl(json) = %{jsonver}
+Provides: %{name}-pecl-zip = %{zipver}, %{name}-pecl(zip) = %{zipver}
+Provides: %{name}-pecl-phar = %{pharver}, %{name}-pecl(phar) = %{pharver}
+Provides: %{name}-pecl-Fileinfo = %{fileinfover}, %{name}-pecl(Fileinfo) = %{fileinfover}
 
 %description common
 The %{name}-common package contains files used by both the %{name}
@@ -205,8 +220,10 @@ Provides: php-pdo = %{version}-%{release}
 Provides: php-pdo-abi = %{pdover}
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 Provides: php-sqlite3
+Provides: %{name}-sqlite3
 %endif
 Provides: php-pdo_sqlite
+Provides: %{name}-pdo_sqlite
 
 %description pdo
 The %{name}-pdo package contains a dynamic shared object that will add
@@ -220,6 +237,8 @@ Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
 Provides: php-mysql = %{version}-%{release}
 Provides: php_database, php-mysqli, php-pdo_mysql
+# Additional Provides for this package name
+Provides: %{name}-mysqli, %{name}-pdo_mysql
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 BuildRequires: mysql-devel < 5.2
 %else
@@ -266,6 +285,8 @@ Requires: %{name}-common = %{version}-%{release}, %{name}-pdo
 Provides: php-pgsql = %{version}-%{release}
 Provides: php_database, php-pdo_pgsql
 BuildRequires: krb5-devel, openssl-devel, postgresql-devel
+# Additional Provides for this package name
+Provides: %{name}-pdo_pgsql
 
 %description pgsql
 The %{name}-pgsql package includes a dynamic shared object (DSO) that can
@@ -282,6 +303,8 @@ Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 Provides: php-process = %{version}-%{release}
 Provides: php-posix, php-sysvsem, php-sysvshm, php-sysvmsg
+# Additional Provides for this package name
+Provides: %{name}-posix, %{name}-sysvsem, %{name}-sysvshm, %{name}-sysvmsg
 
 %description process
 The %{name}-process package contains dynamic shared objects which add
@@ -295,6 +318,8 @@ Summary: A module for PHP applications that use ODBC databases
 Provides: php-odbc = %{version}-%{release}
 Provides: php_database, php-pdo_odbc
 BuildRequires: unixODBC-devel
+# Additional Provides for this package name
+Provides: %{name}-pdo_odbc
 
 %description odbc
 The %{name}-odbc package contains a dynamic shared object that will add
@@ -325,6 +350,9 @@ BuildRequires: firebird-devel
 Requires: %{name}-pdo = %{version}-%{release}
 Provides: php-firebird  = %{version}-%{release}
 Provides: php_database, php-pdo_firebird
+# Additional Provides for this package name
+Provides: %{name}-firebird  = %{version}-%{release}
+Provides: %{name}-pdo_firebird
 
 %description interbase
 The php-interbase package contains a dynamic shared object that will add
@@ -359,6 +387,8 @@ Requires: %{name}-common = %{version}-%{release}
 Provides: php-xml = %{version}-%{release}
 Provides: php-dom, php-xsl, php-domxml, php-wddx
 BuildRequires: libxslt-devel >= 1.0.18-1, libxml2-devel >= 2.4.14-1
+# Additional Provides for this package name
+Provides: %{name}-dom, %{name}-xsl, %{name}-domxml, %{name}-wddx
 
 %description xml
 The %{name}-xml package contains dynamic shared objects which add support
@@ -450,6 +480,8 @@ Requires: %{name}-pdo = %{version}-%{release}
 BuildRequires: freetds-devel
 Provides: php-mssql = %{version}-%{release}
 Provides: php_database, php-pdo_dblib
+# Additional Provides for this package name
+Provides: %{name}-pdo_dblib
 
 %description mssql
 The php-mssql package contains a dynamic shared object that will
@@ -464,6 +496,8 @@ Requires: %{name}-common = %{version}-%{release}
 Provides: php-embedded = %{version}-%{release}
 # doing a real -devel package for just the .so symlink is a bit overkill
 Provides: php-embedded-devel = %{version}-%{release}
+# Additional Provides for this package name
+Provides: %{name}-embedded-devel = %{version}-%{release}
 
 %description embedded
 The %{name}-embedded package contains a library which can be embedded
