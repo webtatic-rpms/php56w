@@ -101,6 +101,12 @@ Provides: %{name}-zts = %{version}-%{release}
 Provides: php-zts = %{version}-%{release}
 %endif
 
+# Don't provides extensions, which are not shared library, as .so
+%{?filter_provides_in: %filter_provides_in %{_libdir}/php/modules/.*\.so$}
+%{?filter_provides_in: %filter_provides_in %{_libdir}/php-zts/modules/.*\.so$}
+%{?filter_provides_in: %filter_provides_in %{_httpd_moddir}/.*\.so$}
+%{?filter_setup}
+
 %description
 PHP is an HTML-embedded scripting language. PHP attempts to make it
 easy for developers to write dynamically generated webpages. PHP also
