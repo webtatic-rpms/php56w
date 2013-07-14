@@ -27,7 +27,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: php54w
 Version: 5.4.17
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -1190,6 +1190,10 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sat Jul 13 2013 Andy Thompson <andy@webtatic.com> - 5.4.17-2
+- Add provides for php54w-* for all PHP extensions.
+- Remove provides for shared extension .so files.
+
 * Sun Jul 07 2013 Andy Thompson <andy@webtatic.com> - 5.4.17-1
 - update to php-5.4.17
 - Fix ZTS build, so it's included in mod_php and has shared extensions.
