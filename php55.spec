@@ -27,8 +27,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
-Version: 5.5.0
-Release: 2%{?dist}
+Version: 5.5.1
+Release: 1%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -95,7 +95,7 @@ Requires(pre): httpd
 
 %if %{with_zts}
 # obsolete and provide ZTS
-Obsoletes: %{name}-zts < 5.4.17-1
+Obsoletes: %{name}-zts < 5.5.1-1
 Provides: %{name}-zts = %{version}-%{release}
 Provides: php-zts = %{version}-%{release}
 Provides: %{name}-zts = %{version}-%{release}
@@ -1144,6 +1144,9 @@ fi
 %{_bindir}/phar.phar
 %{_bindir}/phar
 %{_mandir}/man1/php.1*
+%{_mandir}/man1/php-cgi.1*
+%{_mandir}/man1/phar.phar.1*
+%{_mandir}/man1/phar.1*
 %doc sapi/cgi/README* sapi/cli/README
 
 %if %{with_fpm}
@@ -1223,6 +1226,15 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sat Jul 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-1
+- update to php-5.5.1
+- Fix ZTS build, so it's included in mod_php and has shared extensions.
+- Move several built-in extensions to shared extensions.
+- Merge php54w-extras into package.
+- Add mysqlnd-linked mysql, mysqli, pdo_mysql extensions
+- Add provides for php55w-* for all PHP extensions.
+- Remove provides for shared extension .so files.
+
 * Sat Jun 22 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-2
 - Fix ICU dependency version for EL5
 
