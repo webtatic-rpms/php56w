@@ -62,6 +62,7 @@ Patch45: php-5.4.8-ldap_r.patch
 Patch46: php-5.4.9-fixheader.patch
 # drop "Configure command" from phpinfo output
 Patch47: php-5.4.9-phpinfo.patch
+Patch48: php-5.5.0-icuconfig.patch
 
 # Fixes for tests
 Patch61: php-5.0.4-tests-wddx.patch
@@ -547,7 +548,11 @@ support for using the recode library to PHP.
 Summary: Internationalization extension for PHP applications
 Group: System Environment/Libraries
 Requires: %{name}-common = %{version}-%{release}
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 BuildRequires: libicu-devel >= 4.0
+%else
+BuildRequires: libicu42-devel >= 4.0
+%endif
 Provides: php-intl = %{version}-%{release}
 
 %description intl
@@ -581,6 +586,7 @@ support for using the enchant library to PHP.
 %endif
 %patch46 -p1 -b .fixheader
 %patch47 -p1 -b .phpinfo
+%patch48 -p1 -b .icuconfig
 
 %patch61 -p1 -b .tests-wddx
 
@@ -795,7 +801,11 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --with-unixODBC=shared,%{_prefix} \
       --enable-fileinfo=shared \
       --enable-intl=shared \
+%if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
       --with-icu-dir=%{_prefix} \
+%else
+      --with-icu-config=%{_bindir}/icu42-icu-config
+%endif
       --with-enchant=shared,%{_prefix} \
       --with-recode=shared,%{_prefix} \
       --enable-opcache"
@@ -1234,6 +1244,7 @@ fi
 - Add mysqlnd-linked mysql, mysqli, pdo_mysql extensions
 - Add provides for php55w-* for all PHP extensions.
 - Remove provides for shared extension .so files.
+- Add patch to specify exact icu-config file for EL5
 
 * Sat Jun 22 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-2
 - Fix ICU dependency version for EL5

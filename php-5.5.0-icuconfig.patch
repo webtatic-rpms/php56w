@@ -1,0 +1,68 @@
+--- php-5.5.1/acinclude.m4.icuconfig	2013-07-21 10:32:44.000000000 +0100
++++ php-5.5.1/acinclude.m4	2013-07-21 10:34:50.000000000 +0100
+@@ -2203,17 +2203,23 @@
+ AC_DEFUN([PHP_SETUP_ICU],[
+   PHP_ARG_WITH(icu-dir,,
+   [  --with-icu-dir=DIR      Specify where ICU libraries and headers can be found], DEFAULT, no)
++  PHP_ARG_WITH(icu-config,,
++  [  --with-icu-config=FILE      Specify the path to icu-config], no, no)
+ 
+-  if test "$PHP_ICU_DIR" = "no"; then
+-    PHP_ICU_DIR=DEFAULT
+-  fi
++  if test "$PHP_ICU_CONFIG" = "no"; then
++    if test "$PHP_ICU_DIR" = "no"; then
++      PHP_ICU_DIR=DEFAULT
++    fi
+ 
+-  if test "$PHP_ICU_DIR" = "DEFAULT"; then
+-    dnl Try to find icu-config
+-    AC_PATH_PROG(ICU_CONFIG, icu-config, no, [$PATH:/usr/local/bin])
++    if test "$PHP_ICU_DIR" = "DEFAULT"; then
++      dnl Try to find icu-config
++      AC_PATH_PROG(ICU_CONFIG, icu-config, no, [$PATH:/usr/local/bin])
++    else
++      ICU_CONFIG="$PHP_ICU_DIR/bin/icu-config"
++    fi
+   else
+-    ICU_CONFIG="$PHP_ICU_DIR/bin/icu-config"
+-  fi
++    ICU_CONFIG="$PHP_ICU_CONFIG"
++  fi
+ 
+   AC_MSG_CHECKING([for location of ICU headers and libraries])
+ 
+--- php-5.5.1/aclocal.m4.icuconfig	2013-07-21 10:32:27.000000000 +0100
++++ php-5.5.1/aclocal.m4	2013-07-21 10:36:23.000000000 +0100
+@@ -2203,17 +2203,23 @@
+ AC_DEFUN([PHP_SETUP_ICU],[
+   PHP_ARG_WITH(icu-dir,,
+   [  --with-icu-dir=DIR      Specify where ICU libraries and headers can be found], DEFAULT, no)
++  PHP_ARG_WITH(icu-config,,
++  [  --with-icu-config=FILE      Specify the path to icu-config], no, no)
+ 
+-  if test "$PHP_ICU_DIR" = "no"; then
+-    PHP_ICU_DIR=DEFAULT
+-  fi
++  if test "$PHP_ICU_CONFIG" = "no"; then
++    if test "$PHP_ICU_DIR" = "no"; then
++      PHP_ICU_DIR=DEFAULT
++    fi
+ 
+-  if test "$PHP_ICU_DIR" = "DEFAULT"; then
+-    dnl Try to find icu-config
+-    AC_PATH_PROG(ICU_CONFIG, icu-config, no, [$PATH:/usr/local/bin])
++    if test "$PHP_ICU_DIR" = "DEFAULT"; then
++      dnl Try to find icu-config
++      AC_PATH_PROG(ICU_CONFIG, icu-config, no, [$PATH:/usr/local/bin])
++    else
++      ICU_CONFIG="$PHP_ICU_DIR/bin/icu-config"
++    fi
+   else
+-    ICU_CONFIG="$PHP_ICU_DIR/bin/icu-config"
+-  fi
++    ICU_CONFIG="$PHP_ICU_CONFIG"
++  fi
+ 
+   AC_MSG_CHECKING([for location of ICU headers and libraries])
+ 
