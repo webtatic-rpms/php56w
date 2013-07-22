@@ -28,7 +28,7 @@
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
 Version: 5.5.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -821,6 +821,7 @@ without_shared="--without-gd \
       --disable-xmlreader --disable-xmlwriter \
       --without-sqlite3 --disable-phar --disable-fileinfo \
       --disable-json --without-pspell --disable-wddx \
+      --without-curl --disable-posix --disable-xml \
       --disable-simplexml --disable-exif --without-gettext \
       --without-iconv --disable-ftp --without-bz2 --disable-ctype \
       --disable-shmop --disable-sockets --disable-tokenizer \
@@ -1029,20 +1030,29 @@ for mod in pgsql mysql mysqli odbc ldap snmp xmlrpc imap \
     enchant phar fileinfo intl \
     mcrypt tidy pdo_dblib mssql pspell curl wddx \
     posix shmop sysvshm sysvsem sysvmsg recode xml; do
-    cat > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini <<EOF
+
+    # Make sure wddx is loaded after the xml extension, which it depends on
+    if [ "$mod" = "wddx" ]
+    then
+        ini=xml_${mod}.ini
+    else
+        ini=${mod}.ini
+    fi
+
+    cat > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${ini} <<EOF
 ; Enable ${mod} extension module
 extension=${mod}.so
 EOF
 %if %{with_zts}
-    cp $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${mod}.ini \
-       $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/${mod}.ini
+    cp $RPM_BUILD_ROOT%{_sysconfdir}/php.d/${ini} \
+       $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/${ini}
 %endif
     cat > files.${mod} <<EOF
 %attr(755,root,root) %{_libdir}/php/modules/${mod}.so
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php.d/${mod}.ini
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php.d/${ini}
 %if %{with_zts}
 %attr(755,root,root) %{_libdir}/php-zts/modules/${mod}.so
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php-zts.d/${mod}.ini
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/php-zts.d/${ini}
 %endif
 EOF
 done
@@ -1236,6 +1246,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Mon Jul 21 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-2
+- Make sure wddx is loaded after the xml extension, which it depends on
+
 * Sat Jul 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-1
 - update to php-5.5.1
 - Fix ZTS build, so it's included in mod_php and has shared extensions.
