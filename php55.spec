@@ -10,6 +10,7 @@
 %global jsonver     1.2.1
 %global opcachever  7.0.2-dev
 
+%global mysql_sock %(mysql_config --socket 2>/dev/null || echo /var/lib/mysql/mysql.sock)
 %define httpd_mmn %(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)
 
 # Use the arch-specific mysql_config binary to avoid mismatch with the
@@ -765,6 +766,7 @@ with_shared="--with-imap=shared --with-imap-ssl \
       --enable-mysqlnd=shared \
       --with-mysql=shared,mysqlnd \
       --with-mysqli=shared,mysqlnd \
+      --with-mysql-sock=%{mysql_sock} \
       --with-interbase=shared,%{_libdir}/firebird \
       --with-pdo-firebird=shared,%{_libdir}/firebird \
       --enable-dom=shared \
@@ -1248,6 +1250,7 @@ fi
 %changelog
 * Mon Jul 21 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-2
 - Make sure wddx is loaded after the xml extension, which it depends on
+- Add explicit mysql sock definition for mysqlnd
 
 * Sat Jul 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-1
 - update to php-5.5.1
