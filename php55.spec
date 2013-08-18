@@ -8,7 +8,7 @@
 %global pharver     2.0.1
 %global zipver      1.11.0
 %global jsonver     1.2.1
-%global opcachever  7.0.2-dev
+%global opcachever  7.0.3-dev
 
 %global mysql_sock %(mysql_config --socket 2>/dev/null || echo /var/lib/mysql/mysql.sock)
 %define httpd_mmn %(cat %{_includedir}/httpd/.mmn || echo missing-httpd-devel)
@@ -1250,6 +1250,7 @@ fi
 %changelog
 * Sun Aug 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.2-1
 - update to php-5.5.2
+- update opcachever to 7.0.3-dev
 
 * Mon Jul 21 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-2
 - Make sure wddx is loaded after the xml extension, which it depends on
