@@ -28,8 +28,8 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
-Version: 5.5.1
-Release: 2%{?dist}
+Version: 5.5.2
+Release: 1%{?dist}
 License: PHP
 Group: Development/Languages
 URL: http://www.php.net/
@@ -1248,6 +1248,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sun Aug 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.2-1
+- update to php-5.5.2
+
 * Mon Jul 21 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-2
 - Make sure wddx is loaded after the xml extension, which it depends on
 - Add explicit mysql sock definition for mysqlnd
