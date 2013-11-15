@@ -28,7 +28,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php55w
-Version: 5.5.5
+Version: 5.5.6
 Release: 1%{?dist}
 License: PHP
 Group: Development/Languages
@@ -1248,6 +1248,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Fri Nov 15 2013 Andy Thompson <andy@webtatic.com> - 5.5.6-1
+- update to php-5.5.6
+
 * Sat Oct 26 2013 Andy Thompson <andy@webtatic.com> - 5.5.5-1
 - update to php-5.5.5
 
