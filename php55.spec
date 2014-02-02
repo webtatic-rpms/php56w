@@ -227,6 +227,7 @@ Group: Development/Languages
 Requires: %{name}-common = %{version}-%{release}
 Provides: php-pdo = %{version}-%{release}
 Provides: php-pdo-abi = %{pdover}
+Provides: php(pdo-abi) = %{pdover}
 %if 0%{?fedora} >= 11 || 0%{?rhel} >= 6
 Provides: php-sqlite3
 Provides: %{name}-sqlite3
