@@ -28,7 +28,7 @@
 %global _hardened_build 1
 
 # version used for php embedded library soname
-%global embed_version 5.5
+%global embed_version 5.6
 
 %global mysql_sock %(mysql_config --socket 2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
@@ -86,14 +86,16 @@
 %global db_devel  libdb-devel
 %endif
 
+%global rcver alpha1
+
 Summary: PHP scripting language for creating dynamic web sites
 %if 0%{?scl:1}
 Name: %{?scl_prefix}php
 %else
-Name: php55w
+Name: php56w
 %endif
-Version: 5.5.8
-Release: 1%{?dist}
+Version: 5.6.0
+Release: 0.1.%{?rcver}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -101,7 +103,7 @@ License: PHP and Zend and BSD
 Group: Development/Languages
 URL: http://www.php.net/
 
-Source0: http://www.php.net/distributions/php-%{version}%{?rcver}.tar.bz2
+Source0: http://downloads.php.net/tyrael/php-%{version}%{?rcver}.tar.bz2
 Source1: php.conf
 Source2: php.ini
 Source3: macros.php
@@ -517,9 +519,6 @@ Provides: %{name}-pdo_mysql, %{name}-pdo_mysql%{?_isa}
 %if ! %{with_libmysql}
 Obsoletes: %{name}-mysql < %{version}-%{release}
 %endif
-
-# override mysql 5.5 extension build, which is no longer maintained
-%{!?scl:Obsoletes: %{name}-mysql55}
 
 %description mysqlnd
 The php-mysqlnd package contains a dynamic shared object that will add
@@ -1855,44 +1854,6 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
-* Sun Jan 12 2014 Andy Thompson <andy@webtatic.com> - 5.5.8-1
-- update to php-5.5.8
-
-* Fri Dec 13 2013 Andy Thompson <andy@webtatic.com> - 5.5.7-1
-- update to php-5.5.7
-
-* Fri Nov 15 2013 Andy Thompson <andy@webtatic.com> - 5.5.6-1
-- update to php-5.5.6
-
-* Sat Oct 26 2013 Andy Thompson <andy@webtatic.com> - 5.5.5-1
-- update to php-5.5.5
-
-* Sat Aug 24 2013 Andy Thompson <andy@webtatic.com> - 5.5.3-1
-- update to php-5.5.3
-
-* Sun Aug 18 2013 Andy Thompson <andy@webtatic.com> - 5.5.2-1
-- update to php-5.5.2
-- update opcachever to 7.0.3-dev
-
-* Mon Jul 21 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-2
-- Make sure wddx is loaded after the xml extension, which it depends on
-- Add explicit mysql sock definition for mysqlnd
-
-* Sat Jul 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.1-1
-- update to php-5.5.1
-- Fix ZTS build, so it's included in mod_php and has shared extensions.
-- Move several built-in extensions to shared extensions.
-- Merge php54w-extras into package.
-- Add mysqlnd-linked mysql, mysqli, pdo_mysql extensions
-- Add provides for php55w-* for all PHP extensions.
-- Remove provides for shared extension .so files.
-- Add patch to specify exact icu-config file for EL5
-
-* Sat Jun 22 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-2
-- Fix ICU dependency version for EL5
-
-* Thu Jun 20 2013 Andy Thompson <andy@webtatic.com> - 5.5.0-1
-- fork php54w package
-- update to php-5.5.0
-- update Zend ABI version check to match new 20121212
-- extract opcache extension into a sub-package with upstream version check
+* Sun Feb 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.1.alpha1
+- fork php55w package
+- update to php-5.6.0alpha1
