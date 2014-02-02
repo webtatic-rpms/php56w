@@ -186,7 +186,8 @@ package and the %{name}-cli package.
 %package devel
 Group: Development/Libraries
 Summary: Files needed for building PHP extensions
-Requires: %{name} = %{version}-%{release}, autoconf, automake
+Requires: %{name}-cli = %{version}-%{release}, autoconf, automake
+Requires: pcre-devel
 Provides: php-devel = %{version}-%{release}
 
 %description devel
@@ -1162,10 +1163,13 @@ fi
 %{_bindir}/php-cgi
 %{_bindir}/phar.phar
 %{_bindir}/phar
+# provides phpize here (not in -devel) for pecl command
+%{_bindir}/phpize
 %{_mandir}/man1/php.1*
 %{_mandir}/man1/php-cgi.1*
 %{_mandir}/man1/phar.phar.1*
 %{_mandir}/man1/phar.1*
+%{_mandir}/man1/phpize.1*
 %doc sapi/cgi/README* sapi/cli/README
 
 %if %{with_fpm}
@@ -1188,7 +1192,6 @@ fi
 %files devel
 %defattr(-,root,root)
 %{_bindir}/php-config
-%{_bindir}/phpize
 %{_includedir}/php
 %{_libdir}/php/build
 %if %{with_zts}
@@ -1200,7 +1203,6 @@ fi
 %{_libdir}/php-zts/build
 %endif
 %{_mandir}/man1/php-config.1*
-%{_mandir}/man1/phpize.1*
 %config %{_sysconfdir}/rpm/macros.php
 
 %files embedded
