@@ -66,7 +66,6 @@ Patch47: php-5.4.9-phpinfo.patch
 Patch48: php-5.5.0-icuconfig.patch
 
 # Fixes for tests
-Patch61: php-5.0.4-tests-wddx.patch
 
 # Bug fixes
 
@@ -588,8 +587,6 @@ support for using the enchant library to PHP.
 %patch46 -p1 -b .fixheader
 %patch47 -p1 -b .phpinfo
 %patch48 -p1 -b .icuconfig
-
-%patch61 -p1 -b .tests-wddx
 
 # Prevent %%doc confusion over LICENSE files
 cp Zend/LICENSE Zend/ZEND_LICENSE
