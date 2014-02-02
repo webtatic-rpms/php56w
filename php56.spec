@@ -179,8 +179,6 @@ BuildRequires: systemtap-sdt-devel
 %endif
 %if 0%{!?scl:1}
 %if %{with_zts}
-# obsolete and provide ZTS
-%{!?scl:Obsoletes: %{name}-zts < 5.5.1-1}
 Provides: php-zts = %{version}-%{release}
 Provides: php-zts%{?_isa} = %{version}-%{release}
 %endif
