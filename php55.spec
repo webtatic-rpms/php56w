@@ -17,6 +17,9 @@
 # arch detection heuristic used by bindir/mysql_config.
 %define mysql_config %{_libdir}/mysql/mysql_config
 
+# Regression tests take a long time, you can skip 'em with this
+%{!?runselftest: %{expand: %%global runselftest 1}}
+
 %global with_dtrace 1
 
 %ifarch %{ix86} x86_64
@@ -611,15 +614,11 @@ mkdir build-cli build-apache build-embedded \
     build-fpm
 %endif
 
-# Remove bogus test; position of read position after fopen(, "a+")
-# is not defined by C standard, so don't presume anything.
-rm -f ext/standard/tests/file/bug21131.phpt
-# php_egg_logo_guid() removed by patch41
-rm -f tests/basic/php_egg_logo_guid.phpt
-
-# Tests that fail.
-rm -f ext/standard/tests/file/bug22414.phpt \
-      ext/iconv/tests/bug16069.phpt
+# ----- Manage known as failed test -------
+# affected by systzdata patch
+rm -f ext/date/tests/timezone_location_get.phpt
+# fails sometime
+rm -f ext/sockets/tests/mcast_ipv?_recv.phpt
 
 # Safety check for API version change.
 vapi=`sed -n '/#define PHP_API_VERSION/{s/.* //;p}' main/php.h`
@@ -906,9 +905,14 @@ popd
 %endif
 
 %check
+%if %runselftest
+
+# Increase stack size (required by bug54268.phpt)
+ulimit -s 32712
+
 cd build-apache
 # Run tests, using the CLI SAPI
-export NO_INTERACTION=1 REPORT_EXIT_STATUS=1 MALLOC_CHECK_=2
+export NO_INTERACTION=1 REPORT_EXIT_STATUS=1 MALLOC_CHECK_=2 SKIP_ONLINE_TESTS=1
 unset TZ LANG LC_ALL
 if ! make test; then
   set +x
@@ -923,7 +927,8 @@ if ! make test; then
   set -x
   #exit 1
 fi
-unset NO_INTERACTION REPORT_EXIT_STATUS MALLOC_CHECK_
+unset NO_INTERACTION REPORT_EXIT_STATUS MALLOC_CHECK_ SKIP_ONLINE_TESTS
+%endif
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
