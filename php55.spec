@@ -1152,9 +1152,9 @@ fi
 %dir %{_libdir}/php
 %dir %{_libdir}/php/modules
 %if %{with_zts}
-#dir %{_sysconfdir}/php-zts.d
+%dir %{_sysconfdir}/php-zts.d
 %dir %{_libdir}/php-zts
-#dir %{_libdir}/php-zts/modules
+%dir %{_libdir}/php-zts/modules
 %endif
 %dir %{_localstatedir}/lib/php
 %dir %{_libdir}/php/pear
