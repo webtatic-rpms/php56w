@@ -53,7 +53,7 @@ Patch8: php-5.4.7-libdb.patch
 # Fixes for extensions
 
 # Functional changes
-Patch40: php-5.0.4-dlopen.patch
+Patch40: php-5.4.0-dlopen.patch
 Patch42: php-5.3.1-systzdata-v10.patch
 # See http://bugs.php.net/53436
 Patch43: php-5.4.0-phpize.patch
