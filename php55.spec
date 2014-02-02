@@ -54,7 +54,7 @@ Patch8: php-5.4.7-libdb.patch
 
 # Functional changes
 Patch40: php-5.0.4-dlopen.patch
-Patch42: php-5.3.1-systzdata-v7.patch
+Patch42: php-5.3.1-systzdata-v10.patch
 # See http://bugs.php.net/53436
 Patch43: php-5.4.0-phpize.patch
 # Use -lldap_r for OpenLDAP
