@@ -14,13 +14,13 @@
 %endif
 
 # API/ABI check
-%global apiver      20121113
-%global zendver     20121212
+%global apiver      20131106
+%global zendver     20131226
 %global pdover      20080721
 # Extension version
 %global fileinfover 1.0.5-dev
 %global pharver     2.0.2
-%global zipver      1.11.0
+%global zipver      1.12.4-dev
 %global jsonver     1.2.1
 %global opcachever  7.0.3-dev
 
@@ -1040,7 +1040,7 @@ if test "$ver" != "%{pharver}"; then
    : Update the pharver macro and rebuild.
    exit 1
 fi
-ver=$(sed -n '/#define PHP_ZIP_VERSION_STRING /{s/.* "//;s/".*$//;p}' ext/zip/php_zip.h)
+ver=$(sed -n '/#define PHP_ZIP_VERSION /{s/.* "//;s/".*$//;p}' ext/zip/php_zip.h)
 if test "$ver" != "%{zipver}"; then
    : Error: Upstream ZIP version is now ${ver}, expecting %{zipver}.
    : Update the zipver macro and rebuild.
