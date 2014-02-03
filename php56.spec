@@ -53,6 +53,9 @@
 
 %global with_dtrace 1
 
+# Build phpdbg
+%global with_phpdbg   1
+
 %if 0%{?__isa_bits:1}
 %global isasuffix -%{__isa_bits}
 %else
@@ -227,6 +230,26 @@ Provides: %{name}-readline, %{name}-readline%{?_isa}
 %description cli
 The %{name}-cli package contains the command-line interface 
 executing PHP scripts, /usr/bin/php, and the CGI interface.
+
+%if %{with_phpdbg}
+%package phpdbg
+Group: Development/Languages
+Summary: Interactive PHP debugger
+BuildRequires: readline-devel
+Requires: %{name}-common%{?_isa} = %{version}-%{release}
+%if 0%{!?scl:1}
+Provides: php-phpdbg = %{version}-%{release}
+Provides: php-phpdbg%{?_isa} = %{version}-%{release}
+%endif
+
+%description phpdbg
+Implemented as a SAPI module, phpdbg can excert complete control over
+the environment without impacting the functionality or performance of
+your code.
+
+phpdbg aims to be a lightweight, powerful, easy to use debugging
+platform for PHP
+%endif
 
 %if %{with_fpm}
 %package fpm
@@ -986,7 +1009,10 @@ mkdir build-cli build-apache build-embedded \
     build-zts build-ztscli \
 %endif
 %if %{with_fpm}
-    build-fpm
+    build-fpm \
+%endif
+%if %{with_phpdbg}
+    build-phpdbg
 %endif
 
 # ----- Manage known as failed test -------
@@ -1242,10 +1268,11 @@ without_shared="--without-gd \
       --disable-sysvmsg --disable-sysvshm --disable-sysvsem \
       --disable-opcache"
 
-# Build /usr/bin/php with the CLI SAPI, /usr/bin/php-cgi with the CGI SAPI, and
-# all the shared extensions
+# Build /usr/bin/php with the CLI SAPI, /usr/bin/php-cgi with the CGI SAPI,
+# and all the shared extensions
 pushd build-cli
 build --enable-force-cgi-redirect \
+      --disable-phpdbg \
       --libdir=%{_libdir}/php \
       --enable-pcntl \
       --enable-fastcgi \
@@ -1289,6 +1316,7 @@ popd
 pushd build-ztscli
 EXTENSION_DIR=%{_libdir}/php-zts/modules
 build --enable-force-cgi-redirect \
+      --disable-phpdbg \
       --enable-pcntl \
       --enable-fastcgi \
       --without-readline \
@@ -1309,9 +1337,20 @@ build --with-apxs2=%{_httpd_apxs} \
       --enable-maintainer-zts \
       --with-config-file-scan-dir=%{_sysconfdir}/php-zts.d
 popd
+%endif
 
-### NOTE!!! EXTENSION_DIR was changed for the -zts build, so it must remain
-### the last SAPI to be built.
+%if %{with_phpdbg}
+# Build /usr/bin/phpdbg with readline support
+pushd build-phpdbg
+EXTENSION_DIR=%{_libdir}/php/modules
+build --enable-phpdbg \
+      --libdir=%{_libdir}/php \
+      --with-readline \
+      --without-libedit \
+      --without-mysql \
+      --disable-pdo \
+      ${without_shared}
+popd
 %endif
 
 %check
@@ -1374,6 +1413,11 @@ make -C build-embedded install-sapi install-headers INSTALL_ROOT=$RPM_BUILD_ROOT
 %if %{with_fpm}
 # Install the php-fpm binary
 make -C build-fpm install-fpm INSTALL_ROOT=$RPM_BUILD_ROOT
+%endif
+
+%if %{with_phpdbg}
+# Install the phpdbg binary
+make -C build-phpdbg install-phpdbg INSTALL_ROOT=$RPM_BUILD_ROOT
 %endif
 
 # Install everything from the CLI/CGI SAPI build
@@ -1764,6 +1808,11 @@ fi
 #{?scl: %{_root_bindir}/%{?scl_prefix}php}
 #{?scl: %{_root_bindir}/%{?scl_prefix}phar}
 
+%if %{with_phpdbg}
+%files phpdbg
+%{_bindir}/phpdbg
+%endif
+
 %if %{with_fpm}
 %files fpm
 %doc php-fpm.conf.default
@@ -1855,3 +1904,4 @@ fi
 * Sun Feb 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.1.alpha1
 - fork php55w package
 - update to php-5.6.0alpha1
+- add php56w-phpdbg package output
