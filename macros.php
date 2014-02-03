@@ -3,9 +3,10 @@
 # 
 %php_core_api @PHP_APIVER@
 %php_zend_api @PHP_ZENDVER@
-%php_pdo_api @PHP_PDOVER@
+%php_pdo_api  @PHP_PDOVER@
+%php_version  @PHP_VERSION@
 
-%php_extdir %{_libdir}/php/modules
+%php_extdir    %{_libdir}/php/modules
 %php_ztsextdir %{_libdir}/php-zts/modules
 
 %php_inidir    %{_sysconfdir}/php.d

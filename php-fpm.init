@@ -20,6 +20,9 @@ then
 	exit 0
 fi
 
+# Source additional config
+. /etc/sysconfig/php-fpm
+
 RETVAL=0
 prog="php-fpm"
 pidfile=${PIDFILE-/var/run/php-fpm/php-fpm.pid}
