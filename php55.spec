@@ -86,7 +86,8 @@ Source8: php-fpm.sysconfig
 Source9: php.modconf
 Source10: php.ztsmodconf
 Source11: php-fpm.init
-Source12: opcache.ini
+Source50: opcache.ini
+Source51: opcache-default.blacklist
 
 # Build fixes
 Patch5: php-5.2.0-includedir.patch
@@ -1336,6 +1337,7 @@ install -m 755 -d $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d
 %endif
 install -m 755 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php
 install -m 700 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/session
+install -m 700 -d $RPM_BUILD_ROOT%{_localstatedir}/lib/php/wsdlcache
 
 %if %{with_fpm}
 # PHP-FPM stuff
@@ -1370,10 +1372,14 @@ install -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/php-fpm
 (cd $RPM_BUILD_ROOT%{_bindir}; ln -sfn phar.phar phar)
 
 # Copy stub .ini file for opcache
-install -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/php.d/opcache.ini
+install -m 644 %{SOURCE50} $RPM_BUILD_ROOT%{_sysconfdir}/php.d/opcache.ini
+# The default Zend OPcache blacklist file
+install -m 644 %{SOURCE51} $RPM_BUILD_ROOT%{_sysconfdir}/php.d/opcache-default.blacklist
 %if %{with_zts}
-install -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/opcache.ini
+install -m 644 %{SOURCE50} $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/opcache.ini
+install -m 644 %{SOURCE51} $RPM_BUILD_ROOT%{_sysconfdir}/php-zts.d/opcache-default.blacklist
 %endif
+
 
 # Generate files lists and stub .ini files for each subpackage
 for mod in pgsql odbc ldap snmp xmlrpc imap \
@@ -1569,6 +1575,7 @@ fi
 %{_httpd_moddir}/libphp5-zts.so
 %endif
 %attr(0770,root,apache) %dir %{_localstatedir}/lib/php/session
+%attr(0770,root,apache) %dir %{_localstatedir}/lib/php/wsdlcache
 %config(noreplace) %{_httpd_confdir}/php.conf
 %if "%{_httpd_modconfdir}" != "%{_httpd_confdir}"
 %config(noreplace) %{_httpd_modconfdir}/10-php.conf
@@ -1659,9 +1666,11 @@ fi
 %files opcache
 %attr(755,root,root) %{_libdir}/php/modules/opcache.so
 %config(noreplace) %{_sysconfdir}/php.d/opcache.ini
+%config(noreplace) %{_sysconfdir}/php.d/opcache-default.blacklist
 %if %{with_zts}
 %attr(755,root,root) %{_libdir}/php-zts/modules/opcache.so
 %config(noreplace) %{_sysconfdir}/php-zts.d/opcache.ini
+%config(noreplace) %{_sysconfdir}/php-zts.d/opcache-default.blacklist
 %endif
 
 %files pgsql -f files.pgsql

@@ -4,7 +4,16 @@
 # description:	PHP FastCGI Process Manager
 # processname: php-fpm
 # config: /etc/php-fpm.conf
+# config: /etc/sysconfig/php-fpm
 # pidfile: /var/run/php-fpm/php-fpm.pid
+#
+### BEGIN INIT INFO
+# Provides: php-fpm
+# Required-Start: $local_fs $remote_fs $network $named
+# Required-Stop: $local_fs $remote_fs $network
+# Short-Description: start and stop PHP FPM
+# Description: PHP FastCGI Process Manager
+### END INIT INFO
 
 # Standard LSB functions
 #. /lib/lsb/init-functions
@@ -15,13 +24,15 @@
 # Check that networking is up.
 . /etc/sysconfig/network
 
+# Additional environment file
+if [ -f /etc/sysconfig/php-fpm ]; then
+      . /etc/sysconfig/php-fpm
+fi
+
 if [ "$NETWORKING" = "no" ]
 then
 	exit 0
 fi
-
-# Source additional config
-. /etc/sysconfig/php-fpm
 
 RETVAL=0
 prog="php-fpm"
@@ -30,7 +41,9 @@ lockfile=${LOCKFILE-/var/lock/subsys/php-fpm}
 
 start () {
 	echo -n $"Starting $prog: "
-	daemon --pidfile ${pidfile} php-fpm
+	dir=$(dirname ${pidfile})
+	[ -d $dir ] || mkdir $dir
+	daemon --pidfile ${pidfile} /usr/sbin/php-fpm --daemonize
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && touch ${lockfile}
@@ -50,6 +63,19 @@ restart () {
         start
 }
 
+reload () {
+	echo -n $"Reloading $prog: "
+	if ! /usr/sbin/php-fpm --test ; then
+	        RETVAL=6
+	        echo $"not reloading due to configuration syntax error"
+	        failure $"not reloading $prog due to configuration syntax error"
+	else
+		killproc -p ${pidfile} php-fpm -USR2
+		RETVAL=$?
+	fi
+	echo
+}
+
 
 # See how we were called.
 case "$1" in
@@ -63,14 +89,21 @@ case "$1" in
 	status -p ${pidfile} php-fpm
 	RETVAL=$?
 	;;
-  restart|reload|force-reload)
+  restart)
 	restart
+	;;
+  reload|force-reload)
+	reload
+	;;
+  configtest)
+ 	/usr/sbin/php-fpm --test
+	RETVAL=$?
 	;;
   condrestart|try-restart)
 	[ -f ${lockfile} ] && restart || :
 	;;
   *)
-	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|try-restart}"
+	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart|try-restart|configtest}"
 	RETVAL=2
         ;;
 esac
