@@ -22,7 +22,7 @@
 %global pharver     2.0.2
 %global zipver      1.12.4-dev
 %global jsonver     1.2.1
-%global opcachever  7.0.3-dev
+%global opcachever  7.0.3
 
 # Adds -z now to the linker flags
 %global _hardened_build 1
