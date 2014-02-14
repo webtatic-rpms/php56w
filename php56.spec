@@ -20,7 +20,7 @@
 # Extension version
 %global fileinfover 1.0.5-dev
 %global pharver     2.0.2
-%global zipver      1.12.4-dev
+%global zipver      1.12.4
 %global jsonver     1.2.1
 %global opcachever  7.0.3
 
@@ -89,7 +89,7 @@
 %global db_devel  libdb-devel
 %endif
 
-%global rcver alpha1
+%global rcver alpha2
 
 Summary: PHP scripting language for creating dynamic web sites
 %if 0%{?scl:1}
@@ -98,7 +98,7 @@ Name: %{?scl_prefix}php
 Name: php56w
 %endif
 Version: 5.6.0
-Release: 0.1.%{?rcver}%{?dist}
+Release: 0.2.%{?rcver}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1901,6 +1901,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Fri Feb 14 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
+- update to php-5.6.0alpha2
+
 * Sun Feb 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.1.alpha1
 - fork php55w package
 - update to php-5.6.0alpha1
