@@ -147,6 +147,7 @@ Patch48: php-5.5.0-icuconfig.patch
 # Fixes for tests
 
 # Bug fixes
+Patch60: php-5.6.0alpha2-rollbackplinkdef.patch
 
 # Security fixes
 
@@ -988,6 +989,8 @@ support for using the enchant library to PHP.
 %patch46 -p1 -b .fixheader
 %patch47 -p1 -b .phpinfo
 %patch48 -p1 -b .icuconfig
+
+%patch60 -p1 -b .rollbackplinkdef
 
 # Prevent %%doc confusion over LICENSE files
 cp Zend/LICENSE Zend/ZEND_LICENSE
@@ -1903,6 +1906,7 @@ fi
 %changelog
 * Fri Feb 14 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
 - update to php-5.6.0alpha2
+- add patch for mysqli build failure
 
 * Sun Feb 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.1.alpha1
 - fork php55w package
