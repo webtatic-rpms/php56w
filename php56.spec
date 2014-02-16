@@ -1904,9 +1904,10 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
-* Fri Feb 14 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
+* Sun Feb 16 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
 - update to php-5.6.0alpha2
 - add patch for mysqli build failure
+- update the php.ini to latest
 
 * Sun Feb 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.1.alpha1
 - fork php55w package
