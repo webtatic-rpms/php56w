@@ -22,7 +22,7 @@
 %global pharver     2.0.2
 %global zipver      1.12.4
 %global jsonver     1.2.1
-%global opcachever  7.0.3
+%global opcachever  7.0.4-dev
 
 # Adds -z now to the linker flags
 %global _hardened_build 1
@@ -1076,7 +1076,7 @@ if test "$ver" != "%{jsonver}"; then
    : Update the jsonver macro and rebuild.
    exit 1
 fi
-ver=$(sed -n '/#define ACCELERATOR_VERSION /{s/.* "//;s/".*$//;p}' ext/opcache/ZendAccelerator.h)
+ver=$(sed -n '/#define PHP_ZENDOPCACHE_VERSION /{s/.* "//;s/".*$//;p}' ext/opcache/ZendAccelerator.h)
 if test "$ver" != "%{opcachever}"; then
    : Error: Upstream OPcache version is now ${ver}, expecting %{opcachever}.
    : Update the opcachever macro and rebuild.
@@ -1904,6 +1904,7 @@ fi
 * Sat Mar 15 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.3.alpha3
 - update to php-5.6.0alpha3
 - remove patch for mysql build failure, now in upstream
+- replace opcache version constant with new constant
 
 * Sun Feb 16 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
 - update to php-5.6.0alpha2
