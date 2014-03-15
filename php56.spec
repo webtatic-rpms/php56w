@@ -18,7 +18,7 @@
 %global zendver     20131226
 %global pdover      20080721
 # Extension version
-%global fileinfover 1.0.5-dev
+%global fileinfover 1.0.5
 %global pharver     2.0.2
 %global zipver      1.12.4
 %global jsonver     1.2.1
@@ -89,7 +89,7 @@
 %global db_devel  libdb-devel
 %endif
 
-%global rcver alpha2
+%global rcver alpha3
 
 Summary: PHP scripting language for creating dynamic web sites
 %if 0%{?scl:1}
@@ -98,7 +98,7 @@ Name: %{?scl_prefix}php
 Name: php56w
 %endif
 Version: 5.6.0
-Release: 0.2.%{?rcver}%{?dist}
+Release: 0.3.%{?rcver}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1904,6 +1904,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sat Mar 15 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.3.alpha3
+- update to php-5.6.0alpha3
+
 * Sun Feb 16 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.2.alpha2
 - update to php-5.6.0alpha2
 - add patch for mysqli build failure
