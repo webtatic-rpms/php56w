@@ -89,7 +89,7 @@
 %global db_devel  libdb-devel
 %endif
 
-%global rcver beta1
+%global rcver beta2
 
 Summary: PHP scripting language for creating dynamic web sites
 %if 0%{?scl:1}
@@ -98,7 +98,7 @@ Name: %{?scl_prefix}php
 Name: php56w
 %endif
 Version: 5.6.0
-Release: 0.4.%{?rcver}%{?dist}
+Release: 0.5.%{?rcver}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -1901,6 +1901,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Fri May 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.5.beta2
+- update to php-5.6.0beta2
+
 * Sun Apr 13 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.4.beta1
 - update to php-5.6.0beta1
 
