@@ -126,6 +126,7 @@ Patch5: php-5.2.0-includedir.patch
 Patch6: php-5.2.4-embed.patch
 Patch7: php-5.3.0-recode.patch
 Patch8: php-5.4.7-libdb.patch
+Patch9: php-5.6.0beta2-mysqlicopy.patch
 
 # Fixes for extension modules
 # https://bugs.php.net/63171 no odbc call during timeout
@@ -976,6 +977,7 @@ support for using the enchant library to PHP.
 %patch6 -p1 -b .embed
 %patch7 -p1 -b .recode
 %patch8 -p1 -b .libdb
+%patch9 -p1 -b .mysqlicopy
 
 %patch21 -p1 -b .odbctimer
 
@@ -1903,6 +1905,7 @@ fi
 %changelog
 * Fri May 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.5.beta2
 - update to php-5.6.0beta2
+- add patch for mysqli build failure #67186
 
 * Sun Apr 13 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.4.beta1
 - update to php-5.6.0beta1
