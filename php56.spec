@@ -89,7 +89,7 @@
 %global db_devel  libdb-devel
 %endif
 
-%global rcver beta2
+%global rcver beta3
 
 Summary: PHP scripting language for creating dynamic web sites
 %if 0%{?scl:1}
@@ -98,7 +98,7 @@ Name: %{?scl_prefix}php
 Name: php56w
 %endif
 Version: 5.6.0
-Release: 0.5.%{?rcver}%{?dist}
+Release: 0.6.%{?rcver}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
@@ -126,7 +126,6 @@ Patch5: php-5.2.0-includedir.patch
 Patch6: php-5.2.4-embed.patch
 Patch7: php-5.3.0-recode.patch
 Patch8: php-5.4.7-libdb.patch
-Patch9: php-5.6.0beta2-mysqlicopy.patch
 
 # Fixes for extension modules
 # https://bugs.php.net/63171 no odbc call during timeout
@@ -977,7 +976,6 @@ support for using the enchant library to PHP.
 %patch6 -p1 -b .embed
 %patch7 -p1 -b .recode
 %patch8 -p1 -b .libdb
-%patch9 -p1 -b .mysqlicopy
 
 %patch21 -p1 -b .odbctimer
 
@@ -1903,6 +1901,10 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Fri May 16 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.6.beta3
+- update to php-5.6.0beta3
+- remove patch for #67186 now fixed upstream
+
 * Fri May 02 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.5.beta2
 - update to php-5.6.0beta2
 - add patch for mysqli build failure #67186
