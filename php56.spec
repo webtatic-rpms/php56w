@@ -98,7 +98,7 @@ Name: %{?scl_prefix}php
 Name: php56w
 %endif
 Version: 5.6.0
-Release: 0.7.%{?rcver}%{?dist}
+Release: 0.7%{?rcver:.%{rcver}}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
 # TSRM is licensed under BSD
