@@ -1813,6 +1813,7 @@ fi
 %if %{with_phpdbg}
 %files phpdbg
 %{_bindir}/phpdbg
+%{_mandir}/man1/phpdbg.1*
 %endif
 
 %if %{with_fpm}
@@ -1906,6 +1907,7 @@ fi
 * Fri Jul 04 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.9.RC2
 - update to php-5.6.0RC2
 - add patch for broken phpdbg man page install
+- add phpdbg man page to phpdbg package
 
 * Fri Jun 20 2014 Andy Thompson <andy@webtatic.com> - 5.6.0-0.8.RC1
 - update to php-5.6.0RC1
