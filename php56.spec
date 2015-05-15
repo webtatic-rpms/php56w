@@ -20,7 +20,7 @@
 # Extension version
 %global fileinfover 1.0.5
 %global pharver     2.0.2
-%global zipver      1.12.4
+%global zipver      1.12.5
 %global jsonver     1.2.1
 %global opcachever  7.0.4-dev
 
@@ -1912,6 +1912,7 @@ fi
 * Fri May 15 2015 Andy Thompson <andy@webtatic.com> - 5.6.9-1
 - update to php-5.6.9
 - update systzdata patch to support latest upstream
+- update zipver to reflect version in source
 
 * Thu Apr 16 2015 Andy Thompson <andy@webtatic.com> - 5.6.8-1
 - update to php-5.6.8
