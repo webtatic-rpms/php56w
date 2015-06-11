@@ -22,7 +22,7 @@
 %global pharver     2.0.2
 %global zipver      1.12.5
 %global jsonver     1.2.1
-%global opcachever  7.0.4-dev
+%global opcachever  7.0.6-dev
 
 # Adds -z now to the linker flags
 %global _hardened_build 1
@@ -1911,6 +1911,7 @@ fi
 %changelog
 * Thu Jun 11 2015 Andy Thompson <andy@webtatic.com> - 5.6.10-1
 - update to php-5.6.10
+- update opcachever to upstream latest version
 
 * Fri May 15 2015 Andy Thompson <andy@webtatic.com> - 5.6.9-1
 - update to php-5.6.9
