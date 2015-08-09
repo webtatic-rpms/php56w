@@ -95,7 +95,7 @@ Name: %{?scl_prefix}php
 %else
 Name: php56w
 %endif
-Version: 5.6.11
+Version: 5.6.12
 Release: 1%{?rcver:.%{rcver}}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -104,7 +104,7 @@ License: PHP and Zend and BSD
 Group: Development/Languages
 URL: http://www.php.net/
 
-Source0: http://downloads.php.net/tyrael/php-%{version}%{?rcver}.tar.bz2
+Source0: https://secure.php.net/distributions/php-%{version}%{?rcver}.tar.bz2
 Source1: php.conf
 Source2: php.ini
 Source3: macros.php
@@ -1909,6 +1909,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sun Aug 09 2015 Andy Thompson <andy@webtatic.com> - 5.6.12-1
+- update to php-5.6.12
+
 * Fri Jul 10 2015 Andy Thompson <andy@webtatic.com> - 5.6.11-1
 - update to php-5.6.11
 
