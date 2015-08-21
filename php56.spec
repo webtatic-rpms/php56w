@@ -131,7 +131,7 @@ Patch21: php-5.4.7-odbctimer.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
-Patch42: php-5.5.25-systzdata-v12.patch
+Patch42: php-5.6.13-systzdata-v13.patch
 # See http://bugs.php.net/53436
 Patch43: php-5.4.0-phpize.patch
 # Use -lldap_r for OpenLDAP
@@ -1911,6 +1911,7 @@ fi
 %changelog
 * Fri Sep 04 2015 Andy Thompson <andy@webtatic.com> - 5.6.13-1
 - update to php-5.6.13
+- adapt systzdata patch for upstream changes
 
 * Sun Aug 09 2015 Andy Thompson <andy@webtatic.com> - 5.6.12-1
 - update to php-5.6.12
