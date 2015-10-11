@@ -39,6 +39,20 @@
 # arch detection heuristic used by bindir/mysql_config.
 %global mysql_config %{_root_libdir}/mysql/mysql_config
 
+%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%global with_systemd 1
+%else
+%global with_systemd 0
+%endif
+
+%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%global with_tmpfiles 1
+%global _macrosdir %{_rpmconfigdir}/macros.d
+%else
+%global with_tmpfiles 0
+%global _macrosdir %{_root_sysconfdir}/rpm
+%endif
+
 %ifarch %{ix86} x86_64
 %global with_fpm 1
 %else
@@ -257,7 +271,7 @@ Summary: PHP FastCGI Process Manager
 # Zend is licensed under Zend
 # TSRM and fpm are licensed under BSD
 License: PHP and Zend and BSD
-%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%if %{with_systemd}
 BuildRequires: systemd-devel
 BuildRequires: systemd-units
 Requires: systemd-units
@@ -1096,7 +1110,7 @@ rm -f TSRM/tsrm_win32.h \
 find . -name \*.[ch] -exec chmod 644 {} \;
 chmod 644 README.*
 
-%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%if %{with_tmpfiles}
 # php-fpm configuration files for tmpfiles.d
 echo "d %{_localstatedir}/run/php-fpm 755 root root" >php-fpm.tmpfiles
 %endif
@@ -1295,7 +1309,7 @@ popd
 # Build php-fpm
 pushd build-fpm
 build --enable-fpm \
-%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%if %{with_systemd}
       --with-fpm-systemd \
 %endif
       --libdir=%{_libdir}/php \
@@ -1512,10 +1526,12 @@ sed -e 's:/var/lib:%{_localstatedir}/lib:' \
     -e 's:/var/log:%{_localstatedir}/log:' \
     -i $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.d/www.conf
 mv $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf.default .
-%if 0%{?fedora} >= 15 || 0%{?rhel} >= 7
+%if %{with_tmpfiles}
 # tmpfiles.d
 install -m 755 -d $RPM_BUILD_ROOT%{_prefix}/lib/tmpfiles.d
 install -m 644 php-fpm.tmpfiles $RPM_BUILD_ROOT%{_prefix}/lib/tmpfiles.d/php-fpm.conf
+%endif
+%if %{with_systemd}
 sed -e "s/daemonise = yes/daemonise = no/" \
     -i $RPM_BUILD_ROOT%{_sysconfdir}/php-fpm.conf
 # install systemd unit files and scripts for handling server startup
@@ -1657,7 +1673,7 @@ cat files.zip >> files.common
 %endif
 
 # Install the macros file:
-install -d $RPM_BUILD_ROOT%{_root_sysconfdir}/rpm
+install -d $RPM_BUILD_ROOT%{_macrosdir}
 sed -e "s/@PHP_APIVER@/%{apiver}%{isasuffix}/" \
     -e "s/@PHP_ZENDVER@/%{zendver}%{isasuffix}/" \
     -e "s/@PHP_PDOVER@/%{pdover}%{isasuffix}/" \
@@ -1670,7 +1686,7 @@ sed -e "s/@PHP_APIVER@/%{apiver}%{isasuffix}/" \
 %endif
     < %{SOURCE3} > macros.php
 install -m 644 -c macros.php \
-           $RPM_BUILD_ROOT%{_root_sysconfdir}/rpm/macros.%{_name}
+           $RPM_BUILD_ROOT%{_macrosdir}/macros.%{_name}
 
 # Remove unpackaged files
 rm -rf $RPM_BUILD_ROOT%{_libdir}/php/modules/*.a \
@@ -1696,38 +1712,15 @@ getent passwd apache >/dev/null || \
     -d %{_httpd_contentdir} -c "Apache" apache
 exit 0
 
-%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%if %{with_systemd}
 %post fpm
-%if 0%{?systemd_post:1}
 %systemd_post %{?scl_prefix}php-fpm.service
-%else
-if [ $1 = 1 ]; then
-    # Initial installation
-    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-fi
-%endif
 
 %preun fpm
-%if 0%{?systemd_preun:1}
 %systemd_preun %{?scl_prefix}php-fpm.service
-%else
-if [ $1 = 0 ]; then
-    # Package removal, not upgrade
-    /bin/systemctl --no-reload disable %{?scl_prefix}php-fpm.service >/dev/null 2>&1 || :
-    /bin/systemctl stop %{?scl_prefix}php-fpm.service >/dev/null 2>&1 || :
-fi
-%endif
 
 %postun fpm
-%if 0%{?systemd_postun_with_restart:1}
 %systemd_postun_with_restart %{?scl_prefix}php-fpm.service
-%else
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ]; then
-    # Package upgrade, not uninstall
-    /bin/systemctl try-restart %{?scl_prefix}php-fpm.service >/dev/null 2>&1 || :
-fi
-%endif
 
 # Handle upgrading from SysV initscript to native systemd unit.
 # We can tell if a SysV version of php-fpm was previously installed by
@@ -1835,8 +1828,10 @@ fi
 %config(noreplace) %{_root_sysconfdir}/logrotate.d/%{?scl_prefix}php-fpm
 %config(noreplace) %{_sysconfdir}/sysconfig/php-fpm
 
-%if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
+%if %{with_tmpfiles}
 %{_prefix}/lib/tmpfiles.d/php-fpm.conf
+%endif
+%if %{with_systemd}
 %{_unitdir}/%{?scl_prefix}php-fpm.service
 %else
 %{_root_initddir}/%{?scl_prefix}php-fpm
@@ -1865,7 +1860,7 @@ fi
 %{_libdir}/php-zts/build
 %endif
 %{_mandir}/man1/php-config.1*
-%{_root_sysconfdir}/rpm/macros.%{_name}
+%{_macrosdir}/macros.%{_name}
 
 %files embedded
 %{_libdir}/libphp5.so
@@ -1917,6 +1912,7 @@ fi
 %changelog
 * Sun Oct 11 2015 Andy Thompson <andy@webtatic.com> - 5.6.14-2
 - Add php-fpm conditional restart on EL < 7
+- Simplify spec conditionals
 
 * Thu Oct 01 2015 Andy Thompson <andy@webtatic.com> - 5.6.14-1
 - update to php-5.6.14
