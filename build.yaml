@@ -1,0 +1,8 @@
+name: php56w
+builds:
+  webtatic-el7:
+    target: el7-development
+    arch: [x86_64]
+  webtatic-el6:
+    target: el6-development
+    arch: [x86_64, i386]
