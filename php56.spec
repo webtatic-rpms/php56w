@@ -140,8 +140,6 @@ Patch7: php-5.3.0-recode.patch
 Patch8: php-5.6.17-libdb.patch
 
 # Fixes for extension modules
-# https://bugs.php.net/63171 no odbc call during timeout
-Patch21: php-5.4.7-odbctimer.patch
 
 # Functional changes
 Patch40: php-5.4.0-dlopen.patch
@@ -989,8 +987,6 @@ support for using the enchant library to PHP.
 %patch6 -p1 -b .embed
 %patch7 -p1 -b .recode
 %patch8 -p1 -b .libdb
-
-%patch21 -p1 -b .odbctimer
 
 %patch40 -p1 -b .dlopen
 %patch42 -p1 -b .systzdata
@@ -1916,6 +1912,7 @@ fi
 %changelog
 * Sat Apr 30 2016 Andy Thompson <andy@webtatic.com> - 5.6.21-1
 - update to php-5.6.21
+- remove odbctimer patch for upstream fix
 
 * Sat Apr 02 2016 Andy Thompson <andy@webtatic.com> - 5.6.20-1
 - update to php-5.6.20
