@@ -109,7 +109,7 @@ Name: %{?scl_prefix}php
 %else
 Name: php56w
 %endif
-Version: 5.6.21
+Version: 5.6.22
 Release: 1%{?rcver:.%{rcver}}%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -1910,6 +1910,9 @@ fi
 %files mysqlnd -f files.mysqlnd
 
 %changelog
+* Sat May 28 2016 Andy Thompson <andy@webtatic.com> - 5.6.22-1
+- update to php-5.6.22
+
 * Sat Apr 30 2016 Andy Thompson <andy@webtatic.com> - 5.6.21-1
 - update to php-5.6.21
 - remove odbctimer patch for upstream fix
