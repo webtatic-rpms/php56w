@@ -27,11 +27,11 @@
 # Adds -z now to the linker flags
 %global _hardened_build 1
 
-# version used for major release purposes
-%global major_release 5.6
+# version used for minor release purposes
+%global minor_release 5.6
 
  # version used for php embedded library soname
-%global embed_version %{major_release}
+%global embed_version %{minor_release}
 
 %global mysql_sock %(mysql_config --socket 2>/dev/null || echo /var/lib/mysql/mysql.sock)
 
@@ -357,7 +357,7 @@ Provides: php-zlib, php-zlib%{?_isa}
 # Additional Provides for this package name
 Provides: php-common = %{version}-%{release}
 Provides: php-common%{?_isa} = %{version}-%{release}
-Conflicts: php-common < %{major_release}
+Conflicts: php-common < %{minor_release}
 %endif
 # Provides for all builtin/shared modules:
 Provides: %{name}-bz2, %{name}-bz2%{?_isa}
